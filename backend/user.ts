@@ -1,6 +1,7 @@
 import express from "express";
 import { database } from "./database.ts";
 import * as argon2 from "argon2";
+import { isAuthenticated } from "./middleware/isAuthenticated.ts";
 
 const router = express.Router();
 
@@ -10,26 +11,30 @@ interface User {
   password: string;
 }
 
+//Create User
 router.post("/signup", async (req, res) => {
   const newUser: User = req.body;
 
-  const userName = await database.query(
+  //Get username and email and check if already exists
+  const username = await database.query(
     "SELECT username FROM Users where username = $1",
     [newUser.username],
   );
 
-  const eMail = await database.query(
+  const email = await database.query(
     "SELECT email FROM Users where email = $1",
     [newUser.email],
   );
 
-  if (userName.rows.length > 0) {
+  //If already exists, stop signup and return 409
+  if (username.rows.length > 0) {
     res.status(409).send("Username already exists.");
     return;
-  } else if (eMail.rows.length > 0) {
+  } else if (email.rows.length > 0) {
     res.status(409).send("E-mail already exists.");
     return;
   } else {
+    //If username, email doesnt exist hash password with Argon2 and add User to database
     try {
       const hashedPassword = await argon2.hash(newUser.password);
       await database.query(
@@ -43,9 +48,64 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  //Verifiera att användaren är inloggad först!
+//Log in
+router.post(
+  "/signin",
+  express.urlencoded({ extended: false }),
+  async (req, res, next) => {
+    const inputEmail: User["email"] = req.body.email;
+    const inputPassword: User["password"] = req.body.password;
 
+    const result = await database.query(
+      "SELECT * FROM Users where email = $1",
+      [inputEmail],
+    );
+    const user = result.rows[0];
+    if (!user) {
+      res.status(409).send("E-mail is incorrect");
+      return;
+    }
+
+    try {
+      if (await argon2.verify(user.password, inputPassword)) {
+        req.session.regenerate(function (err) {
+          if (err) next(err);
+
+          // store user information in session
+          req.session.user = user.id;
+
+          // save the session before redirection to ensure page
+          // load does not happen before session is saved
+          req.session.save(function (err) {
+            if (err) return next(err);
+            res.send("You are logged in.");
+          });
+        });
+      } else {
+        res.status(400).send("Password did not match.");
+        return;
+      }
+    } catch (err) {
+      res.status(500).send("Unable to find user.");
+    }
+  },
+);
+
+router.get("/logout", function (req, res, next) {
+  // clear the user from the session object and save.
+  req.session.user = null;
+  req.session.save(function (err) {
+    if (err) next(err);
+
+    req.session.regenerate(function (err) {
+      if (err) next(err);
+      res.send("You are logged out.");
+    });
+  });
+});
+
+//Delete User
+router.delete("/:id", isAuthenticated, async (req, res) => {
   const id = Number(req.params.id);
   const password: string = req.body.password;
 
