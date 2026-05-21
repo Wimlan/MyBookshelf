@@ -11,6 +11,58 @@ interface User {
   password: string;
 }
 
+//signin
+router.post("/signin", async (req, res, next) => {
+  const inputEmail: User["email"] = req.body.email;
+  const inputPassword: User["password"] = req.body.password;
+
+  const result = await database.query("SELECT * FROM Users where email = $1", [
+    inputEmail,
+  ]);
+  const user = result.rows[0];
+  if (!user) {
+    res.status(409).send("E-mail is incorrect");
+    return;
+  }
+
+  try {
+    if (await argon2.verify(user.password, inputPassword)) {
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+
+        // store user information in session
+        req.session.user = user.id;
+
+        // save the session before redirection to ensure page
+        // load does not happen before session is saved
+        req.session.save(function (err) {
+          if (err) return next(err);
+          res.send("You are logged in.");
+        });
+      });
+    } else {
+      res.status(400).send("Password did not match.");
+      return;
+    }
+  } catch (err) {
+    res.status(500).send("Unable to find user.");
+  }
+});
+
+//sign out
+router.get("/signout", function (req, res, next) {
+  // clear the user from the session object and save.
+  req.session.user = null;
+  req.session.save(function (err) {
+    if (err) next(err);
+
+    req.session.regenerate(function (err) {
+      if (err) next(err);
+      res.send("You are logged out.");
+    });
+  });
+});
+
 //Create User
 router.post("/signup", async (req, res) => {
   const newUser: User = req.body;
@@ -62,57 +114,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-//Log in
-router.post("/signin", async (req, res, next) => {
-  const inputEmail: User["email"] = req.body.email;
-  const inputPassword: User["password"] = req.body.password;
-
-  const result = await database.query("SELECT * FROM Users where email = $1", [
-    inputEmail,
-  ]);
-  const user = result.rows[0];
-  if (!user) {
-    res.status(409).send("E-mail is incorrect");
-    return;
-  }
-
-  try {
-    if (await argon2.verify(user.password, inputPassword)) {
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-
-        // store user information in session
-        req.session.user = user.id;
-
-        // save the session before redirection to ensure page
-        // load does not happen before session is saved
-        req.session.save(function (err) {
-          if (err) return next(err);
-          res.send("You are logged in.");
-        });
-      });
-    } else {
-      res.status(400).send("Password did not match.");
-      return;
-    }
-  } catch (err) {
-    res.status(500).send("Unable to find user.");
-  }
-});
-
-router.get("/signout", function (req, res, next) {
-  // clear the user from the session object and save.
-  req.session.user = null;
-  req.session.save(function (err) {
-    if (err) next(err);
-
-    req.session.regenerate(function (err) {
-      if (err) next(err);
-      res.send("You are logged out.");
-    });
-  });
-});
-
 //Delete User
 router.delete("/:id", isAuthenticated, async (req, res) => {
   const id = Number(req.params.id);
@@ -139,10 +140,6 @@ router.delete("/:id", isAuthenticated, async (req, res) => {
   } catch (err) {
     res.status(500).send("Unable to delete user.");
   }
-});
-
-router.get("/", (req, res) => {
-  res.send("Hello from /user!");
 });
 
 export default router;

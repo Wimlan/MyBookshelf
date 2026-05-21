@@ -3,6 +3,7 @@ import { database, pool } from "./database.ts";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import user from "./user.ts";
+import bookshelf from "./bookshelf.ts";
 
 const app = express();
 

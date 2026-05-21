@@ -1,0 +1,12 @@
+import express from "express";
+import { database } from "./database.ts";
+import { isAuthenticated } from "./middleware/isAuthenticated.ts";
+import books from "./books.ts";
+
+const router = express.Router();
+
+router.get("/", (req, res) => {
+  res.send("Hello from /bookshelf!");
+});
+
+export default router;
