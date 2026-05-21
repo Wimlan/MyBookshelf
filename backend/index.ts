@@ -1,24 +1,24 @@
 import express from "express";
-import { database } from "./database.ts";
-import type { QueryResult } from "pg";
+import { database, pool } from "./database.ts";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import user from "./user.ts";
 
 const app = express();
 
+const PgSession = connectPgSimple(session);
+new PgSession({ pool, createTableIfMissing: true });
+
+app.use(express.json());
 app.use(
   session({
+    store: new PgSession({ pool, createTableIfMissing: true }),
     secret: process.env.SESSION_SECRET!,
     resave: false,
-    saveUninitialized: true,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-    },
+    saveUninitialized: false,
+    cookie: { secure: false },
   }),
 );
-app.use(express.json());
 app.use("/user", user);
 
 app.get("/api", async (_request, response) => {
