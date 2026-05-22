@@ -1,7 +1,6 @@
 import express from "express";
 import { database } from "./database.ts";
 import { isAuthenticated } from "./middleware/isAuthenticated.ts";
-import books from "./books.ts";
 
 const router = express.Router();
 

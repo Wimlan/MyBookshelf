@@ -1,4 +1,5 @@
 import express from "express";
+import type { QueryResult } from "pg";
 import { database } from "./database.ts";
 import * as argon2 from "argon2";
 import { isAuthenticated } from "./middleware/isAuthenticated.ts";
@@ -6,6 +7,7 @@ import { isAuthenticated } from "./middleware/isAuthenticated.ts";
 const router = express.Router();
 
 interface User {
+  id: number;
   username: string;
   email: string;
   password: string;
@@ -16,9 +18,10 @@ router.post("/signin", async (req, res, next) => {
   const inputEmail: User["email"] = req.body.email;
   const inputPassword: User["password"] = req.body.password;
 
-  const result = await database.query("SELECT * FROM Users where email = $1", [
-    inputEmail,
-  ]);
+  const result: QueryResult<User> = await database.query(
+    "SELECT * FROM Users where email = $1",
+    [inputEmail],
+  );
   const user = result.rows[0];
   if (!user) {
     res.status(409).send("E-mail is incorrect");

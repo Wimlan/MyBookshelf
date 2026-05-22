@@ -3,6 +3,7 @@ import { database, pool } from "./database.ts";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import user from "./user.ts";
+import books from "./books.ts";
 import bookshelf from "./bookshelf.ts";
 
 const app = express();
@@ -21,6 +22,8 @@ app.use(
   }),
 );
 app.use("/user", user);
+app.use("/books", books);
+app.use("/bookshelf", bookshelf);
 
 app.get("/api", async (_request, response) => {
   const { rows } = await database.query(
