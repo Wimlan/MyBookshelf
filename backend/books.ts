@@ -25,6 +25,7 @@ interface Bookshelf {
   book_id: number;
 }
 
+//Joins books with genres
 async function getDetailedBook(books: Book[]) {
   //Goes through all books, matches genre_id with correct genre. Makes them into a genres object containing(id, genre) and joins to genre_id
   return Promise.all(
@@ -43,14 +44,24 @@ async function getDetailedBook(books: Book[]) {
   );
 }
 
+//GET for the frontend Title Search Function
 router.get("/", async (req, res) => {
-  //Get all books from the books table and sets them into a function to that does inner join
-  const books: QueryResult<Book> = await database.query("SELECT * FROM books");
-  const detailedBooks = await getDetailedBook(books.rows);
+  const title = req.query.title;
 
-  res.send(detailedBooks);
+  if (title) {
+    //Get all books with matching title from the books table and sets them into a function to that does inner join
+    const books: QueryResult<Book> = await database.query(
+      "SELECT * FROM books WHERE title LIKE $1",
+      [`%${title}%`],
+    );
+    const detailedBooks = await getDetailedBook(books.rows);
+    res.send(detailedBooks);
+  } else {
+    res.send([]);
+  }
 });
 
+//GET for mapping out a users bookshelf in frontend
 router.get("/bookshelf/:id", isAuthenticated, async (req, res) => {
   const id = Number(req.params.id);
   //Get all books inte users bookshelf(books id connected with the correct user id)
@@ -79,4 +90,5 @@ router.get("/bookshelf/:id", isAuthenticated, async (req, res) => {
 
   res.send(detailedBooks);
 });
+
 export default router;
