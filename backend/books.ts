@@ -120,6 +120,7 @@ router.post("/addtoshelf/:id/:bookid", isAuthenticated, async (req, res) => {
 
   if (userBookId.rows.length > 0) {
     res.status(409).send("Book already in shelf.");
+    return;
   }
 
   try {
@@ -163,5 +164,25 @@ router.get("/bookshelf/:id", isAuthenticated, async (req, res) => {
 
   res.send(detailedBooks);
 });
+
+router.delete(
+  "/removefromshelf/:id/:bookid",
+  isAuthenticated,
+  async (req, res) => {
+    const userId = Number(req.params.id);
+    const bookId = Number(req.params.bookid);
+
+    try {
+      await database.query(
+        "DELETE FROM Bookshelves WHERE user_id = $1 AND book_id = $2;",
+        [userId, bookId],
+      );
+      res.status(201).send("Book removed from shelf.");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Book could not be removed.");
+    }
+  },
+);
 
 export default router;
