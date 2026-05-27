@@ -46,7 +46,7 @@ async function getDetailedBook(books: Book[]) {
 }
 
 //FOR ADMIN
-//GET all books and check with query if verified
+//GET all books not verified
 router.get("/notverified", async (req, res) => {
   const books: QueryResult<Book> = await database.query(
     "SELECT * FROM books WHERE verified = FALSE ORDER BY created_at",

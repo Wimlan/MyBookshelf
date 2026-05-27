@@ -118,7 +118,7 @@ router.post("/signup", async (req, res) => {
 });
 
 //Delete User
-router.delete("/:id", isAuthenticated, async (req, res) => {
+router.delete("/delete/:id", isAuthenticated, async (req, res) => {
   const id = Number(req.params.id);
   const password: string = req.body.password;
 
