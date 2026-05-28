@@ -1,9 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 
-import About from "./About";
-import Contact from "./Contact";
-import Home from "./Home";
+import Home from "./pages/Home";
+import Bookshelf from "./pages/Bookshelf";
 
 import {
   createHashRouter,
@@ -17,8 +16,7 @@ function App() {
     {
       children: [
         { element: <Home />, path: "/" },
-        { element: <About />, path: "/about" },
-        { element: <Contact />, path: "/contact" },
+        { element: <Bookshelf />, path: "/bookshelf/:userName" },
       ],
       element: (
         <>
@@ -28,10 +26,7 @@ function App() {
                 <Link to="/">Hem</Link>
               </li>
               <li>
-                <Link to="/about">Om oss</Link>
-              </li>
-              <li>
-                <Link to="/contact">Kontakt</Link>
+                <Link to="/bookshelf/wilma">Om oss</Link>
               </li>
             </ul>
           </nav>

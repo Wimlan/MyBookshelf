@@ -1,1 +1,8 @@
 mybookshelf.sql
+books.sql
+bookshelves_tags.sql
+bookshelves.sql
+genres.sql
+session.sql
+tags.sql
+users.sql
