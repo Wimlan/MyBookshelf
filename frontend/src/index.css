@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@theme {
+  --color-darkest: rgb(47, 34, 53);
+  --color-lightest: rgb(247, 245, 243);
+  --color-darkblue: rgb(11, 57, 72);
+  --color-mediumgreen: rgb(73, 125, 122);
+  --color-warmgrey: rgb(231, 224, 218);
+  --color-warmred: rgb(119, 32, 20);
+  /* --font-poppins: Poppins, sans-serif; */
+}

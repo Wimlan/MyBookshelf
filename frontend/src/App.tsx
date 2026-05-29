@@ -3,10 +3,11 @@ import "./App.css";
 
 import Home from "./pages/Home";
 import Bookshelf from "./pages/Bookshelf";
+import Createuser from "./pages/Createuser";
 
 import {
   createHashRouter,
-  Link,
+  // Link,
   Outlet,
   RouterProvider,
 } from "react-router-dom";
@@ -17,19 +18,10 @@ function App() {
       children: [
         { element: <Home />, path: "/" },
         { element: <Bookshelf />, path: "/bookshelf/:userName" },
+        { element: <Createuser />, path: "/createuser" },
       ],
       element: (
         <>
-          <nav>
-            <ul>
-              <li>
-                <Link to="/">Hem</Link>
-              </li>
-              <li>
-                <Link to="/bookshelf/wilma">Om oss</Link>
-              </li>
-            </ul>
-          </nav>
           <main>
             <Outlet />
           </main>
