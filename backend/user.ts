@@ -24,7 +24,7 @@ router.post("/signin", async (req, res, next) => {
   );
   const user = result.rows[0];
   if (!user) {
-    res.status(409).send("E-mail is incorrect");
+    res.status(409).send({ message: "E-mail is incorrect." });
     return;
   }
 
@@ -40,11 +40,11 @@ router.post("/signin", async (req, res, next) => {
         // load does not happen before session is saved
         req.session.save(function (err) {
           if (err) return next(err);
-          res.send("You are logged in.");
+          res.send({ message: "Log in successful.", userName: user.username });
         });
       });
     } else {
-      res.status(400).send("Password did not match.");
+      res.status(400).send({ message: "Password did not match." });
       return;
     }
   } catch (err) {

@@ -2,6 +2,7 @@ import express from "express";
 import { database, pool } from "./database.ts";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import cors from "cors";
 import user from "./user.ts";
 import books from "./books.ts";
 import bookshelf from "./bookshelf.ts";
@@ -11,6 +12,12 @@ const app = express();
 const PgSession = connectPgSimple(session);
 new PgSession({ pool, createTableIfMissing: true });
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(
   session({
