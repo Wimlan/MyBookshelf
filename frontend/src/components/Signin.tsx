@@ -9,6 +9,10 @@ function Signin() {
   const [loginMessage, setLoginMessage] = useState("");
   const navigate = useNavigate();
 
+  //sends input user info to backend.
+  //It then checks if the input values are correct.
+  //If ok: returns username and navigates to route bookshelf/:userName
+  //If error: Returns error message.
   async function handleSignin() {
     try {
       const res = await fetch("http://localhost:3000/user/signin", {
@@ -47,8 +51,8 @@ function Signin() {
         change={setUserPass}
       />
       <Button value="Sign In" click={handleSignin} />
-      {loginMessage && <p>{loginMessage}</p>}
-
+      {loginMessage && <p>{loginMessage}</p>} //Error message from fetch. Shows
+      message only if message exists.
       <p>No account yet?</p>
       <Link to="/createuser">Create New User</Link>
     </section>
