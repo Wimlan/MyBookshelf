@@ -51,8 +51,9 @@ function Signin() {
         change={setUserPass}
       />
       <Button value="Sign In" click={handleSignin} />
-      {loginMessage && <p>{loginMessage}</p>} //Error message from fetch. Shows
-      message only if message exists.
+      {/* Error message from fetch. Shows
+      message only if message exists. */}
+      {loginMessage && <p>{loginMessage}</p>}
       <p>No account yet?</p>
       <Link to="/createuser">Create New User</Link>
     </section>
