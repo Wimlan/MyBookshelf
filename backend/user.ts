@@ -76,11 +76,11 @@ router.post("/signup", async (req, res) => {
     !newUser.email.includes("@");
 
   if (missing) {
-    res.status(400).send("All fields are required.");
+    res.status(400).send({ message: "All fields are required." });
     return;
   }
   if (invalid) {
-    res.status(400).send("Invalid input.");
+    res.status(400).send({ message: "Invalid input." });
     return;
   }
 
@@ -97,10 +97,10 @@ router.post("/signup", async (req, res) => {
 
   //If already exists, stop signup and return 409
   if (username.rows.length > 0) {
-    res.status(409).send("Username already exists.");
+    res.status(409).send({ message: "Username already exists." });
     return;
   } else if (email.rows.length > 0) {
-    res.status(409).send("E-mail already exists.");
+    res.status(409).send({ message: "E-mail already exists." });
     return;
   } else {
     //If username, email doesnt exist hash password with Argon2 and add User to database
@@ -110,7 +110,7 @@ router.post("/signup", async (req, res) => {
         "INSERT INTO Users(username, email, password) VALUES ($1, $2, $3);",
         [newUser.username, newUser.email, hashedPassword],
       );
-      res.status(201).send("User created.");
+      res.status(201).send({ message: "User created." });
     } catch {
       res.status(500).send("Server error.");
     }

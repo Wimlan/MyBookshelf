@@ -3,7 +3,8 @@ import "./index.css";
 
 import Home from "./pages/Home";
 import Bookshelf from "./pages/Bookshelf";
-import Createuser from "./pages/Createuser";
+import CreateUser from "./pages/CreateUser";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import {
   createHashRouter,
@@ -18,7 +19,8 @@ function App() {
       children: [
         { element: <Home />, path: "/" },
         { element: <Bookshelf />, path: "/bookshelf/:userName" },
-        { element: <Createuser />, path: "/createuser" },
+        { element: <CreateUser />, path: "/createuser" },
+        { element: <PrivacyPolicy />, path: "/privacypolicy" },
       ],
       element: (
         <>

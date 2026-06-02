@@ -42,11 +42,13 @@ function Signin() {
     <section id="sign-in">
       <Input
         label="Your Email"
+        type="text"
         change={setUserEmail}
         placeholder="name@example.com"
       />
       <Input
         label="Your Password"
+        type="password"
         placeholder="password"
         change={setUserPass}
       />

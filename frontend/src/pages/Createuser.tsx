@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import SecondaryHeader from "../components/atoms/SecondaryHeader";
@@ -13,11 +13,11 @@ function CreateUser() {
   const navigate = useNavigate();
 
   //sends input user info to backend.
-  //It then checks if the input values are correct.
-  //If ok: returns username and navigates to route bookshelf/:userName
+  //Backend then checks if the input values are correct.
+  //If ok: Navigates to route Home
   //If error: Returns error message.
   async function handleCreation() {
-    //checks that passwords match(TEST!!!)
+    //checks that passwords match
     if (userPass !== repeatPass) {
       setMessage("Passwords don't match.");
       return;
@@ -37,8 +37,8 @@ function CreateUser() {
       });
 
       const data = await res.json();
-      if (res.ok) {
-        navigate(`/`);
+      if (res.status === 201) {
+        navigate("/");
       } else {
         setMessage(data.message);
       }
@@ -50,23 +50,31 @@ function CreateUser() {
   return (
     <section id="sign-in">
       <SecondaryHeader text="Create New User" />
-      <Input label="Your Username" change={setUserName} placeholder="name" />
+      <Input
+        label="Your Username"
+        type="text"
+        change={setUserName}
+        placeholder="name"
+      />
       <Input
         label="Your Email"
+        type="text"
         change={setUserEmail}
         placeholder="name@example.com"
       />
       <Input
         label="Your Password"
+        type="password"
         placeholder="password"
         change={setUserPass}
       />
       <Input
         label="Your Password"
+        type="password"
         placeholder="password"
         change={setRepeatPass}
       />
-      <a>Privacy Policy</a>
+      <Link to="/privacypolicy">Privacy Policy</Link>
       <Button value="Create User" click={handleCreation} />
       {/* Error message from fetch. Shows message
       only if message exists. */}
