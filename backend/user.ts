@@ -137,6 +137,7 @@ router.delete("/delete/", async (req, res) => {
   const id = req.session.user;
   const password: string = req.body.password;
 
+  //finds the session user id and checks that the account exists before starting to delete
   const result = await database.query(
     "SELECT password FROM Users where id = $1",
     [id],
@@ -147,6 +148,10 @@ router.delete("/delete/", async (req, res) => {
     return;
   }
 
+  //verifies that the (from body) sent in password matches the users password
+  //Argon2 compares the two passwords
+  //if it matches: deletes user and removes user session
+  //If not: sends back an error message
   try {
     if (await argon2.verify(user.password, password)) {
       await database.query("DELETE FROM Users WHERE id = $1", [id]);
