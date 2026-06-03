@@ -34,9 +34,9 @@ http://localhost:3000/user/signup<br>
 <br><br>
 
 **DELETE: Delete User**<br>
-http://localhost:3000/user/delete/:id<br>
+http://localhost:3000/user/delete/<br>
 
-=>Adressparameter (:id): Id of the user in session.<br>
+=>Body: user password is required in body<br>
 <br><br>
 
 ---

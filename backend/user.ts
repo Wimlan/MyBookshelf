@@ -39,7 +39,7 @@ router.post("/signin", async (req, res, next) => {
   );
   const user = result.rows[0];
   if (!user) {
-    res.status(409).send({ message: "E-mail is incorrect." });
+    res.status(409).send({ message: "User not found." });
     return;
   }
 
@@ -133,8 +133,8 @@ router.post("/signup", async (req, res) => {
 });
 
 //Delete User
-router.delete("/delete/:id", isAuthenticated, async (req, res) => {
-  const id = Number(req.params.id);
+router.delete("/delete/", async (req, res) => {
+  const id = req.session.user;
   const password: string = req.body.password;
 
   const result = await database.query(
@@ -143,20 +143,32 @@ router.delete("/delete/:id", isAuthenticated, async (req, res) => {
   );
   const user = result.rows[0];
   if (!user) {
-    res.status(404).send("User not found.");
+    res.status(404).json({ message: "User not found." });
     return;
   }
 
   try {
     if (await argon2.verify(user.password, password)) {
       await database.query("DELETE FROM Users WHERE id = $1", [id]);
-      res.status(200).send("User deleted.");
+
+      req.session.user = null;
+      req.session.save(function (err) {
+        if (err)
+          return res.status(500).json({ message: "Unable to delete user." });
+
+        req.session.regenerate(function (err) {
+          if (err)
+            return res.status(500).json({ message: "Unable to delete user." });
+
+          res.status(200).json({ message: "User Deleted" });
+        });
+      });
     } else {
-      res.status(400).send("Password did not match.");
+      res.status(400).json({ message: "You've entered the wrong password." });
       return;
     }
   } catch (err) {
-    res.status(500).send("Unable to delete user.");
+    res.status(500).json({ message: "Unable to delete user." });
   }
 });
 

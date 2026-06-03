@@ -5,6 +5,8 @@ import MenuDropdown from "../atoms/MenuDropdown";
 import Heading from "../atoms/Heading";
 import SubHeading from "../atoms/SubHeading";
 import Button from "../atoms/Button";
+import Input from "../atoms/Input";
+import Label from "../atoms/Label";
 import { Dialog, DialogPanel } from "@headlessui/react";
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
 
 function Header(props: Props) {
   const [signoutMessage, setSignoutMessage] = useState("");
+  const [deleteMessage, setdeleteMessage] = useState("");
+  const [userPass, setUserPass] = useState("");
   const [popup, setPopup] = useState(false);
   const navigate = useNavigate();
   const errMessage = "Something went wrong. Please try again.";
@@ -39,8 +43,28 @@ function Header(props: Props) {
     }
   }
 
-  function handleDelete() {
-    console.log("deleted");
+  async function handleDelete() {
+    try {
+      const res = await fetch("http://localhost:3000/user/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: userPass,
+        }),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        navigate("/");
+      } else {
+        setdeleteMessage(data.message);
+      }
+    } catch (err) {
+      setdeleteMessage(errMessage);
+    }
   }
 
   return (
@@ -65,6 +89,12 @@ function Header(props: Props) {
           <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
             <Heading text="Are you sure you want to delete this account?" />
             <SubHeading text="A deleted account cannot be recovered." />
+            <Label label="Your Password" />
+            <Input
+              type="password"
+              placeholder="password"
+              change={setUserPass}
+            />
             <Button
               value="Delete Account"
               click={handleDelete}
@@ -75,6 +105,7 @@ function Header(props: Props) {
               click={() => setPopup(false)}
               bg="bg-gray-500"
             />
+            {deleteMessage && <p>{deleteMessage}</p>}
           </DialogPanel>
         </div>
       </Dialog>
