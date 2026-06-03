@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "./atoms/Button";
-import Input from "./atoms/Input";
+import Button from "../atoms/Button";
+import Input from "../atoms/Input";
+import Label from "../atoms/Label";
 
 function Signin() {
   const [userEmail, setUserEmail] = useState("");
@@ -40,18 +41,10 @@ function Signin() {
 
   return (
     <section id="sign-in">
-      <Input
-        label="Your Email"
-        type="text"
-        change={setUserEmail}
-        placeholder="name@example.com"
-      />
-      <Input
-        label="Your Password"
-        type="password"
-        placeholder="password"
-        change={setUserPass}
-      />
+      <Label label="Your Email" />
+      <Input type="text" change={setUserEmail} placeholder="name@example.com" />
+      <Label label="Your Password" />
+      <Input type="password" placeholder="password" change={setUserPass} />
       <Button value="Sign In" click={handleSignin} />
       {/* Error message from fetch. Shows
       message only if message exists. */}

@@ -13,6 +13,21 @@ interface User {
   password: string;
 }
 
+//check if user is logged in and sends username for frontend check
+router.get("/session", async (req, res) => {
+  if (!req.session.user) {
+    res.status(401).json({ message: "Not logged in" });
+    return;
+  }
+
+  const { rows } = await database.query(
+    "SELECT username FROM Users WHERE id = $1",
+    [req.session.user],
+  );
+
+  res.json({ userName: rows[0].username });
+});
+
 //signin
 router.post("/signin", async (req, res, next) => {
   const inputEmail: User["email"] = req.body.email;

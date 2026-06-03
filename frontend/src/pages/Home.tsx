@@ -1,13 +1,32 @@
-import Signin from "../components/Signin.tsx";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import Signin from "../components/organisms/Signin.tsx";
 import MainTitle from "../components/atoms/MainTitle.tsx";
-import SecondaryHeader from "../components/atoms/SecondaryHeader.tsx";
+import Heading from "../components/atoms/Heading.tsx";
 
 function Home() {
+  const navigate = useNavigate();
+
+  //Checks if user is logged in in backend, and if ok navigates to bookshelf
+  //This way the user won't have to log in twice
+  useEffect(() => {
+    async function checkSession() {
+      const res = await fetch("http://localhost:3000/user/session", {
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        navigate(`/bookshelf/${data.userName}`);
+      }
+    }
+    checkSession();
+  }, []);
   return (
     <article id="home">
       <section id="intro">
         <MainTitle />
-        <SecondaryHeader
+        <Heading
           text="With this virtual bookshelf you can easily see the books you own, and
           keep track of their reading status. Add your real-life friends for
           loaning and borrowing, or maybe do a give-away of the books you don't

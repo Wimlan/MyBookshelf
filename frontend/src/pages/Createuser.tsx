@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
-import SecondaryHeader from "../components/atoms/SecondaryHeader";
+import Heading from "../components/atoms/Heading";
+import Label from "../components/atoms/Label";
 
 function CreateUser() {
   const [userName, setUserName] = useState("");
@@ -49,31 +50,15 @@ function CreateUser() {
 
   return (
     <section id="sign-in">
-      <SecondaryHeader text="Create New User" />
-      <Input
-        label="Your Username"
-        type="text"
-        change={setUserName}
-        placeholder="name"
-      />
-      <Input
-        label="Your Email"
-        type="text"
-        change={setUserEmail}
-        placeholder="name@example.com"
-      />
-      <Input
-        label="Your Password"
-        type="password"
-        placeholder="password"
-        change={setUserPass}
-      />
-      <Input
-        label="Your Password"
-        type="password"
-        placeholder="password"
-        change={setRepeatPass}
-      />
+      <Heading text="Create New User" />
+      <Label label="Your Username" />
+      <Input type="text" change={setUserName} placeholder="name" />
+      <Label label="Your Email" />
+      <Input type="text" change={setUserEmail} placeholder="name@example.com" />
+      <Label label="Your Password" />
+      <Input type="password" placeholder="password" change={setUserPass} />
+      <Label label="Your Password" />
+      <Input type="password" placeholder="password" change={setRepeatPass} />
       <Link to="/privacypolicy">Privacy Policy</Link>
       <Button value="Create User" click={handleCreation} />
       {/* Error message from fetch. Shows message

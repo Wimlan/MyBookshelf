@@ -1,10 +1,10 @@
-import FirstHeader from "../components/atoms/FirstHeader";
-import SecondaryHeader from "../components/atoms/SecondaryHeader";
+import Heading from "../components/atoms/Heading";
+import SubHeading from "../components/atoms/SubHeading";
 
 function PrivacyPolicy() {
   return (
     <article id="privacy-policy">
-      <FirstHeader text="Privacy Policy – My Bookshelf" />
+      <Heading text="Privacy Policy – My Bookshelf" />
       <p>Last updated: June 2026</p>
       <p>
         <span>My Bookshelf</span> is a personal project created and operated by
@@ -13,7 +13,7 @@ function PrivacyPolicy() {
       </p>
 
       <section id="data">
-        <SecondaryHeader text="What data we collect" />
+        <SubHeading text="What data we collect" />
         <p>What data we collect</p>
         <ol>
           <li>
@@ -37,7 +37,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="why-collect">
-        <SecondaryHeader text="Why we collect it" />
+        <SubHeading text="Why we collect it" />
         <p>
           We collect this data solely to provide the service — creating your
           account, letting you log in, and saving your bookshelf.
@@ -45,7 +45,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="who-share">
-        <SecondaryHeader text="Who we share it with" />
+        <SubHeading text="Who we share it with" />
         <p>
           We do not share your data with anyone. No third parties, no
           advertisers, no analytics services.
@@ -53,7 +53,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="how-long">
-        <SecondaryHeader text="How long we keep it" />
+        <SubHeading text="How long we keep it" />
         <p>
           Your data is kept for as long as your account exists. You can request
           deletion of your account and all associated data at any time by
@@ -62,7 +62,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="your-rights">
-        <SecondaryHeader text="Your rights (GDPR)" />
+        <SubHeading text="Your rights (GDPR)" />
         <p>
           If you are located in the EU/EEA, you have the right to access,
           correct, or delete your personal data. To exercise any of these
@@ -71,7 +71,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="cookies">
-        <SecondaryHeader text="Cookies" />
+        <SubHeading text="Cookies" />
         <p>
           We use a session cookie to keep you logged in. No tracking or
           advertising cookies are used.
@@ -79,7 +79,7 @@ function PrivacyPolicy() {
       </section>
 
       <section id="contact">
-        <SecondaryHeader text="Contact" />
+        <SubHeading text="Contact" />
         <p>
           If you have any questions about this policy, you can reach us at{" "}
           <span>[wilma.yasuda@gmail.com]</span>.
