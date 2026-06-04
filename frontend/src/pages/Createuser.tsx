@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import MainTitle from "../components/atoms/MainTitle";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import Heading from "../components/atoms/Heading";
@@ -49,7 +50,8 @@ function CreateUser() {
   }
 
   return (
-    <section id="sign-in">
+    <section id="create-user">
+      <MainTitle />
       <Heading text="Create New User" />
       <Label label="Your Username" />
       <Input type="text" change={setUserName} placeholder="name" />

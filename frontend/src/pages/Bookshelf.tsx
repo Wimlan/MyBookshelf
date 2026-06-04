@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import MainTitle from "../components/atoms/MainTitle";
 import Header from "../components/organisms/Header";
+import BookList from "../components/organisms/BookList";
 
 function Bookshelf() {
   const { userName } = useParams();
@@ -34,6 +35,7 @@ function Bookshelf() {
     <>
       <MainTitle user={userName} />
       <Header user={userName} />
+      <BookList user={userName} />
     </>
   );
 }

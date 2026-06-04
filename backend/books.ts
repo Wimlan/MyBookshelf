@@ -65,6 +65,9 @@ router.patch("/verify/:bookid", async (req, res) => {
   );
 
   const userId = result.rows[0]!.added_by;
+
+  //OBS!Kolla om kontot fortfarande finns!
+
   await database.query(
     "INSERT INTO Bookshelves(user_id, book_id) VALUES ($1, $2);",
     [userId, bookId],
@@ -94,9 +97,17 @@ router.get("/search", async (req, res) => {
 });
 
 //GET for mapping out a users bookshelf in frontend
-router.get("/bookshelf/:id", isAuthenticated, async (req, res) => {
-  const userId = Number(req.params.id);
-  //Get all books inte users bookshelf(books id connected with the correct user id)
+router.get("/bookshelf/:username", isAuthenticated, async (req, res) => {
+  const username = req.params.username;
+
+  type userIdRow = { id: number };
+  const userRes: QueryResult<userIdRow> = await database.query(
+    "SELECT id FROM Users WHERE username = $1",
+    [username],
+  );
+
+  const userId = userRes.rows[0]?.id;
+  //Get all books in the users bookshelf(books id connected with the correct user id)
   const userBooks: QueryResult<Bookshelf> = await database.query(
     "SELECT * FROM Bookshelves WHERE user_id = $1",
     [userId],

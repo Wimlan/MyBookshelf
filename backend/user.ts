@@ -154,6 +154,29 @@ router.delete("/delete/", async (req, res) => {
   //If not: sends back an error message
   try {
     if (await argon2.verify(user.password, password)) {
+      const bookshelvesId = await database.query(
+        "SELECT id FROM Bookshelves WHERE user_id = $1",
+        [id],
+      );
+
+      if (bookshelvesId.rows.length > 0) {
+        bookshelvesId.rows.map(async (bookshelfId) => {
+          const tags = await database.query(
+            "SELECT * FROM BookShelves_Tags WHERE bookshelf_id = $1",
+            [bookshelfId.id],
+          );
+          if (tags.rows.length > 0) {
+            await database.query(
+              "DELETE FROM BookShelves_Tags WHERE bookshelf_id = $1",
+              [bookshelfId.id],
+            );
+          }
+        });
+        await database.query("DELETE FROM Bookshelves WHERE user_id = $1", [
+          id,
+        ]);
+      }
+
       await database.query("DELETE FROM Users WHERE id = $1", [id]);
 
       req.session.user = null;

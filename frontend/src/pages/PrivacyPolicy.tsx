@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import Heading from "../components/atoms/Heading";
 import SubHeading from "../components/atoms/SubHeading";
+import Button from "../components/atoms/Button";
+import { handleNav } from "../components/atoms/Button";
+import MainTitle from "../components/atoms/MainTitle";
 
 function PrivacyPolicy() {
+  const navigate = useNavigate();
+
   return (
     <article id="privacy-policy">
+      <MainTitle />
       <Heading text="Privacy Policy – My Bookshelf" />
       <p>Last updated: June 2026</p>
       <p>
@@ -85,6 +92,10 @@ function PrivacyPolicy() {
           <span>[wilma.yasuda@gmail.com]</span>.
         </p>
       </section>
+      <Button
+        value="Go Back"
+        click={() => handleNav(`/createuser`, navigate)}
+      />
     </article>
   );
 }
