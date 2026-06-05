@@ -3,9 +3,12 @@ import SearchInput from "../atoms/SearchInput";
 import SubHeading from "../atoms/SubHeading";
 import Button from "../atoms/Button";
 import type { Book } from "../../pages/Bookshelf";
-import { updateBookshelf } from "../../hooks/updateBookshelf";
 
-function SearchAddBook() {
+interface Props {
+  refresh: () => void;
+}
+
+function SearchAddBook({ refresh }: Props) {
   const [searchText, setSearchText] = useState("");
   const [searchRes, setSearchRes] = useState<Book[]>([]);
   const [clickedBook, setClickedBook] = useState<Book>();
@@ -36,6 +39,7 @@ function SearchAddBook() {
 
       if (res.ok) {
         setMessage(data.message);
+        refresh();
       } else {
         setMessage(data.message);
       }

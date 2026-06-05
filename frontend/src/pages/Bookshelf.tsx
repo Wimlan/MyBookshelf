@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MainTitle from "../components/atoms/MainTitle";
 import Header from "../components/organisms/Header";
 import BookList from "../components/organisms/BookList";
@@ -21,6 +21,7 @@ export interface Tags {
 }
 
 function Bookshelf() {
+  const [bookshelf, setBookshelf] = useState<Book[]>([]);
   const { userName } = useParams();
   const navigate = useNavigate();
 
@@ -47,12 +48,25 @@ function Bookshelf() {
     checkSession();
   }, [userName]);
 
+  async function fetchBookshelf() {
+    try {
+      const res = await fetch(`http://localhost:3000/books/bookshelf/`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setBookshelf(data);
+      console.log(data);
+    } catch (err) {
+      console.log("Could not load bookshelf.");
+    }
+  }
+
   return (
     <>
       <MainTitle user={userName} />
       <Header user={userName} />
-      <SearchAddBook />
-      <BookList />
+      <SearchAddBook refresh={fetchBookshelf} />
+      <BookList bookshelf={bookshelf} fetchBookshelf={fetchBookshelf} />
     </>
   );
 }

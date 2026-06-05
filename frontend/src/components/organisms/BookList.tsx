@@ -17,10 +17,23 @@ interface Tags {
   tag: string;
 }
 
-function BookList() {
-  const [bookshelf, setBookshelf] = useState<Book[]>([]);
+interface Props {
+  bookshelf: Book[];
+  fetchBookshelf: () => void;
+}
+
+function BookList({ bookshelf, fetchBookshelf }: Props) {
   const [popup, setPopup] = useState(false);
   const [clickedBook, setClickedBook] = useState<Book>();
+
+  useEffect(() => {
+    fetchBookshelf();
+  }, []);
+
+  function handlePopup(book: Book) {
+    setClickedBook(book);
+    setPopup(true);
+  }
 
   useEffect(() => {
     fetchBookshelf();
@@ -33,29 +46,12 @@ function BookList() {
     }
   }, [bookshelf]);
 
-  function handlePopup(book: Book) {
-    setClickedBook(book);
-    setPopup(true);
-  }
-
-  async function fetchBookshelf() {
-    try {
-      const res = await fetch(`http://localhost:3000/books/bookshelf/`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-      setBookshelf(data);
-      console.log(data);
-    } catch (err) {
-      console.log("Could not load bookshelf.");
-    }
-  }
-
   return (
     <>
       <section>
         {bookshelf &&
-          bookshelf.map((book) => (
+          //With [...bookshelf] the variable itself doesn't mutate and keeps it original state when used elsewhere
+          [...bookshelf].reverse().map((book) => (
             <div key={book.id}>
               {book.tags.map((tag) => (
                 <BookTag key={tag.id} tag={tag.tag} />
