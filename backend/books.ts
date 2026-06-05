@@ -97,16 +97,9 @@ router.get("/search", async (req, res) => {
 });
 
 //GET for mapping out a users bookshelf in frontend
-router.get("/bookshelf/:username", isAuthenticated, async (req, res) => {
-  const username = req.params.username;
+router.get("/bookshelf/", isAuthenticated, async (req, res) => {
+  const userId = req.session.user;
 
-  type userIdRow = { id: number };
-  const userRes: QueryResult<userIdRow> = await database.query(
-    "SELECT id FROM Users WHERE username = $1",
-    [username],
-  );
-
-  const userId = userRes.rows[0]?.id;
   //Get all books in the users bookshelf(books id connected with the correct user id)
   const userBooks: QueryResult<Bookshelf> = await database.query(
     "SELECT * FROM Bookshelves WHERE user_id = $1",

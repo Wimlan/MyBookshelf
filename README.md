@@ -61,9 +61,8 @@ http://localhost:3000/books/search?title=WORD<br>
 =>Replace WORD with the word you want to search for<br>
 <br>
 **GET: Gets a users whole bookshelf. For mapping out a users bookshelf in frontend**<br>
-http://localhost:3000/books/bookshelf/:id<br>
+http://localhost:3000/books/bookshelf/<br>
 <br>
-=>Adressparameter (:id): Id of the user in session.<br>
 <br>
 **POST: Adds a new book to the Books table**<br>
 http://localhost:3000/books/addbook/:id?genre=GENRE<br>

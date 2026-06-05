@@ -6,10 +6,7 @@ export function isAuthenticated(
   res: express.Response,
   next: express.NextFunction,
 ) {
-  const id = Number(req.params.id);
-  const sessionUser = Number(req.session.user);
-
-  if (sessionUser !== id) {
+  if (!req.session.user) {
     res.status(403).send("Unauthorized");
     return;
   }

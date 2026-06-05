@@ -9,7 +9,6 @@ import books from "./books.ts";
 const app = express();
 
 const PgSession = connectPgSimple(session);
-new PgSession({ pool, createTableIfMissing: true });
 
 app.use(
   cors({
@@ -24,7 +23,7 @@ app.use(
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    cookie: { secure: false, sameSite: "lax" },
   }),
 );
 app.use("/user", user);

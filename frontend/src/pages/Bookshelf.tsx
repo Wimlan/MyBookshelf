@@ -35,7 +35,7 @@ function Bookshelf() {
     <>
       <MainTitle user={userName} />
       <Header user={userName} />
-      <BookList user={userName} />
+      <BookList />
     </>
   );
 }
