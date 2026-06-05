@@ -3,6 +3,22 @@ import { useEffect } from "react";
 import MainTitle from "../components/atoms/MainTitle";
 import Header from "../components/organisms/Header";
 import BookList from "../components/organisms/BookList";
+import SearchAddBook from "../components/molecules/SearchAddBook";
+
+export interface Book {
+  id: number;
+  title: string;
+  year: number;
+  author: string;
+  synopsis: string;
+  image: string;
+  tags: Tags[];
+}
+
+export interface Tags {
+  id: number;
+  tag: string;
+}
 
 function Bookshelf() {
   const { userName } = useParams();
@@ -35,6 +51,7 @@ function Bookshelf() {
     <>
       <MainTitle user={userName} />
       <Header user={userName} />
+      <SearchAddBook />
       <BookList />
     </>
   );

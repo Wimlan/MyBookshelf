@@ -82,11 +82,12 @@ router.patch("/verify/:bookid", async (req, res) => {
 //GET for the frontend Title Search Function
 router.get("/search", async (req, res) => {
   const title = req.query.title;
+  const limit = 5;
 
   if (title) {
     //Get all books with matching title from the books table and sets them into a function to that does inner join
     const books: QueryResult<Book> = await database.query(
-      "SELECT * FROM books WHERE title ILIKE $1 AND verified = TRUE",
+      "SELECT * FROM books WHERE title ILIKE $1 AND verified = TRUE LIMIT 5",
       [`%${title}%`],
     );
     const detailedBooks = await getDetailedBook(books.rows);
@@ -191,8 +192,8 @@ router.post("/addbook/:id", isAuthenticated, async (req, res) => {
 });
 
 //Adds a new book to the users bookshelf
-router.post("/addtoshelf/:id/:bookid", isAuthenticated, async (req, res) => {
-  const userId = Number(req.params.id);
+router.post("/addtoshelf/:bookid", isAuthenticated, async (req, res) => {
+  const userId = req.session.user;
   const bookId = Number(req.params.bookid);
 
   const userBookId: QueryResult<Bookshelf> = await database.query(
@@ -201,7 +202,7 @@ router.post("/addtoshelf/:id/:bookid", isAuthenticated, async (req, res) => {
   );
 
   if (userBookId.rows.length > 0) {
-    res.status(409).send("Book already in shelf.");
+    res.status(409).json({ message: "Book already in shelf." });
     return;
   }
 
@@ -210,16 +211,50 @@ router.post("/addtoshelf/:id/:bookid", isAuthenticated, async (req, res) => {
       "INSERT INTO Bookshelves(user_id, book_id) VALUES ($1, $2);",
       [userId, bookId],
     );
-    res.status(201).send("Book added to shelf.");
+    res.status(201).json({ message: "Book added to shelf." });
   } catch (error) {
     console.log(error);
     res.status(500).send("Book could not be added.");
   }
 });
 
+//deleting a book from a users bookshelf
+router.delete(
+  "/removefromshelf/:id/:bookid",
+  isAuthenticated,
+  async (req, res) => {
+    const userId = Number(req.params.id);
+    const bookId = Number(req.params.bookid);
+
+    try {
+      await database.query(
+        "DELETE FROM Bookshelves WHERE user_id = $1 AND book_id = $2;",
+        [userId, bookId],
+      );
+      res.status(201).send("Book removed from shelf.");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Book could not be removed.");
+    }
+  },
+);
+
+//TAGS
+
+//GET for mapping out a users bookshelf in frontend
+router.get("/tags", async (req, res) => {
+  //Get all tags
+  const result: QueryResult<Bookshelf> =
+    await database.query("SELECT * FROM Tags");
+
+  const tags = result.rows;
+
+  res.send(tags);
+});
+
 //Adds a TAG to a book in the users bookshelf
-router.post("/addtag/:id/:bookid", isAuthenticated, async (req, res) => {
-  const userId = Number(req.params.id);
+router.post("/addtag/:bookid", isAuthenticated, async (req, res) => {
+  const userId = req.session.user;
   const bookId = Number(req.params.bookid);
   const tag = req.body.tag;
 
@@ -254,8 +289,8 @@ router.post("/addtag/:id/:bookid", isAuthenticated, async (req, res) => {
 });
 
 //deleting a TAG from users bookshelf
-router.delete("/removetag/:id/:bookid", isAuthenticated, async (req, res) => {
-  const userId = Number(req.params.id);
+router.delete("/removetag/:bookid", isAuthenticated, async (req, res) => {
+  const userId = req.session.user;
   const bookId = Number(req.params.bookid);
   const tag = req.body.tag;
 
@@ -288,26 +323,5 @@ router.delete("/removetag/:id/:bookid", isAuthenticated, async (req, res) => {
     res.status(500).send("Tag could not be removed.");
   }
 });
-
-//deleting a book from a users bookshelf
-router.delete(
-  "/removefromshelf/:id/:bookid",
-  isAuthenticated,
-  async (req, res) => {
-    const userId = Number(req.params.id);
-    const bookId = Number(req.params.bookid);
-
-    try {
-      await database.query(
-        "DELETE FROM Bookshelves WHERE user_id = $1 AND book_id = $2;",
-        [userId, bookId],
-      );
-      res.status(201).send("Book removed from shelf.");
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Book could not be removed.");
-    }
-  },
-);
 
 export default router;

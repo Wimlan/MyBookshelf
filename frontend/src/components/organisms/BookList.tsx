@@ -23,24 +23,32 @@ function BookList() {
   const [clickedBook, setClickedBook] = useState<Book>();
 
   useEffect(() => {
-    async function fetchBookshelf() {
-      try {
-        const res = await fetch(`http://localhost:3000/books/bookshelf/`, {
-          credentials: "include",
-        });
-        const data = await res.json();
-        setBookshelf(data);
-        console.log(data);
-      } catch (err) {
-        console.log("Could not load bookshelf.");
-      }
-    }
     fetchBookshelf();
   }, []);
+
+  useEffect(() => {
+    if (clickedBook) {
+      const updated = bookshelf.find((b) => b.id === clickedBook.id);
+      if (updated) setClickedBook(updated);
+    }
+  }, [bookshelf]);
 
   function handlePopup(book: Book) {
     setClickedBook(book);
     setPopup(true);
+  }
+
+  async function fetchBookshelf() {
+    try {
+      const res = await fetch(`http://localhost:3000/books/bookshelf/`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setBookshelf(data);
+      console.log(data);
+    } catch (err) {
+      console.log("Could not load bookshelf.");
+    }
   }
 
   return (
@@ -59,9 +67,10 @@ function BookList() {
       <section>
         {clickedBook && (
           <BookPopup
+            clickedbook={clickedBook}
             popup={popup}
             close={() => setPopup(false)}
-            book={clickedBook}
+            refresh={fetchBookshelf}
           />
         )}
       </section>

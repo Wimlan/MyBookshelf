@@ -81,28 +81,25 @@ http://localhost:3000/books/addbook/:id?genre=GENRE<br>
 =>Needs to be verified after in order to show up in users bookshelf<br>
 <br>
 **POST: Adds a new book to the users bookshelf**<br>
-http://localhost:3000/books/addtoshelf/:id/:bookid<br>
+http://localhost:3000/books/addtoshelf/:bookid<br>
 <br>
-=>Adressparameter (:id): Id of the user in session.<br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 **POST: Adds a TAG to a book in the users bookshelf**<br>
-http://localhost:3000/books/addtag/:id/:bookid<br>
+http://localhost:3000/books/addtag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
 <br><br>
-=>Adressparameter (:id): Id of the user in session.<br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 
 **DELETE: deleting a TAG from users bookshelf**<br>
-http://localhost:3000/books/removetag/:id/:bookid<br>
+http://localhost:3000/books/removetag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
 <br><br>
-=>Adressparameter (:id): Id of the user in session.<br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 
