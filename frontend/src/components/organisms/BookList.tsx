@@ -36,10 +36,6 @@ function BookList({ bookshelf, fetchBookshelf }: Props) {
   }
 
   useEffect(() => {
-    fetchBookshelf();
-  }, []);
-
-  useEffect(() => {
     if (clickedBook) {
       const updated = bookshelf.find((b) => b.id === clickedBook.id);
       if (updated) setClickedBook(updated);

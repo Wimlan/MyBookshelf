@@ -219,25 +219,37 @@ router.post("/addtoshelf/:bookid", isAuthenticated, async (req, res) => {
 });
 
 //deleting a book from a users bookshelf
-router.delete(
-  "/removefromshelf/:id/:bookid",
-  isAuthenticated,
-  async (req, res) => {
-    const userId = Number(req.params.id);
-    const bookId = Number(req.params.bookid);
+router.delete("/removefromshelf/:bookid", isAuthenticated, async (req, res) => {
+  const userId = req.session.user;
+  const bookId = Number(req.params.bookid);
 
-    try {
-      await database.query(
-        "DELETE FROM Bookshelves WHERE user_id = $1 AND book_id = $2;",
-        [userId, bookId],
-      );
-      res.status(201).send("Book removed from shelf.");
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Book could not be removed.");
-    }
-  },
-);
+  try {
+    const bookshelfId: QueryResult<Bookshelf> = await database.query(
+      "SELECT id FROM Bookshelves WHERE user_id = $1 AND book_id = $2",
+      [userId, bookId],
+    );
+    //Removes all tags from a specific book.
+    //Promise.all makes sure that the delete is finished before the next query runs
+    await Promise.all(
+      bookshelfId.rows.map((bookshelf) => {
+        database.query(
+          "DELETE FROM Bookshelves_Tags WHERE bookshelf_id = $1;",
+          [bookshelf.id],
+        );
+      }),
+    );
+
+    //Removes same book from bookshelf
+    await database.query(
+      "DELETE FROM Bookshelves WHERE user_id = $1 AND book_id = $2;",
+      [userId, bookId],
+    );
+    res.status(200).json({ message: "Book removed from shelf." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Book could not be removed.");
+  }
+});
 
 //TAGS
 

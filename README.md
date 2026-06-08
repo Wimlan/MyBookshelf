@@ -104,9 +104,8 @@ http://localhost:3000/books/removetag/:bookid<br>
 <br>
 
 **DELETE: deleting a book from a users bookshelf**<br>
-http://localhost:3000/books/removefromshelf/:id/:bookid<br>
+http://localhost:3000/books/removefromshelf/:bookid<br>
 
-=>Adressparameter (:id): Id of the user in session.<br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 
