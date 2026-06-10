@@ -43,7 +43,7 @@ function Signin() {
   return (
     <section
       id="sign-in"
-      className="pt-3 pb-3 w-2/3 mx-auto text-center lg:w-1/3 "
+      className="pt-3 pb-3 w-2/3 mx-auto text-center text-lightest lg:w-1/3 "
     >
       <Label label="Your Email" />
       <Input
@@ -74,7 +74,7 @@ function Signin() {
           to="/createuser"
           className="inline-flex items-center justify-center p-5 text-darkest font-bold border-4 border-solid border-mediumgreen rounded hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 rounded-base bg-warmgrey"
         >
-          <span className="w-full">Create New User</span>
+          <span className="w-full">Create a New User</span>
           <svg
             className="w-6 h-6 ms-1 rtl:rotate-180"
             aria-hidden="true"

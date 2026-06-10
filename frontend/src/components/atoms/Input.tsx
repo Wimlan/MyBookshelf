@@ -3,6 +3,7 @@ function Input(props: {
   change: Function;
   placeholder: string;
   type: string;
+  autoComplete?: string;
 }) {
   return (
     <section className="mt-3 mb-3">
@@ -11,6 +12,7 @@ function Input(props: {
           value={props.value}
           onChange={(e) => props.change(e.target.value)}
           type={props.type}
+          autoComplete={props.autoComplete}
           id="input-group-1"
           className="bg-lightest border border-default-medium text-darkest text-sm rounded-base focus:ring-mediumgreen focus:border-mediumgreen block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
           placeholder={props.placeholder}

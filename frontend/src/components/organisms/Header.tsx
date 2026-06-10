@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu } from "@headlessui/react";
+
 import MenuDropdown from "../atoms/MenuDropdown";
 import Heading from "../atoms/Heading";
 import SubHeading from "../atoms/SubHeading";
@@ -75,19 +75,21 @@ function Header(props: Props) {
       message only if message exists. */}
         {signoutMessage && <p>{signoutMessage}</p>}
       </div>
-      <Menu>
-        <Link to={`/bookshelf/${props.user}`}>My Bookshelf</Link>
+      <section className="bg-warmgrey p-5 text-lg flex gap-10 justify-center align-center underline ">
+        <Link className="hover:text-warmred" to={`/bookshelf/${props.user}`}>
+          My Bookshelf
+        </Link>
         <MenuDropdown button="My account" links={links} />
-      </Menu>
+      </section>
 
       <Dialog
         open={popup}
         onClose={() => setPopup(false)}
-        className="relative z-50"
+        className="relative z-50 "
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
-            <Heading text="Are you sure you want to delete this account?" />
+        <div className=" fixed inset-0 flex w-screen items-center justify-center p-4">
+          <DialogPanel className="max-w-lg space-y-4 border bg-warmgrey p-12 text-darkest">
+            <Heading text="Are you sure you want to delete this account?!" />
             <SubHeading text="A deleted account cannot be recovered." />
             <Label label="Your Password" />
             <Input
@@ -95,6 +97,7 @@ function Header(props: Props) {
               type="password"
               placeholder="password"
               change={setUserPass}
+              autoComplete="new-password"
             />
             <Button
               value="Delete Account"
@@ -106,7 +109,7 @@ function Header(props: Props) {
               click={() => setPopup(false)}
               bg="bg-gray-500"
             />
-            {deleteMessage && <p>{deleteMessage}</p>}
+            {deleteMessage && <p className="text-red-500">{deleteMessage}</p>}
           </DialogPanel>
         </div>
       </Dialog>

@@ -74,6 +74,7 @@ function Bookshelf() {
   return (
     <>
       <MainTitle user={userName} />
+
       <Header user={userName} />
       <SearchAddBook refresh={fetchBookshelf} />
       <AddBook popup={popup} close={() => setPopup(false)} />

@@ -192,7 +192,7 @@ router.delete("/delete/", async (req, res) => {
         });
       });
     } else {
-      res.status(400).json({ message: "You've entered the wrong password." });
+      res.status(400).json({ message: "You have entered the wrong password." });
       return;
     }
   } catch (err) {

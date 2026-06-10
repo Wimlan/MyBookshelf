@@ -24,8 +24,11 @@ function Home() {
   }, []);
   return (
     <article id="home">
-      <section id="intro" className="w-2/3 mx-auto text-center lg:w-1/2">
-        <MainTitle />
+      <MainTitle />
+      <section
+        id="intro"
+        className="w-2/3 mx-auto text-center text-lightest lg:w-1/2"
+      >
         <Heading
           text="With this virtual bookshelf you can easily see the books you own, and
           keep track of their reading status."
