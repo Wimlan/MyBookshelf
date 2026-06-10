@@ -56,8 +56,6 @@ function BookPopup({ popup, close }: Props) {
         },
       );
 
-      const data = await res.json();
-
       if (res.ok) {
         setaddedPopup(true);
         setTitle("");
@@ -67,7 +65,7 @@ function BookPopup({ popup, close }: Props) {
         setSynopsis("");
         setImage("");
       } else {
-        setMessage(data.message);
+        setMessage("Information in form is missing.");
       }
     } catch (err) {
       console.log(err);
@@ -76,9 +74,9 @@ function BookPopup({ popup, close }: Props) {
 
   return (
     <>
-      <Dialog open={popup} onClose={close} className="relative z-50">
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+      <Dialog open={popup} onClose={close} className="relative z-50 ">
+        <div className=" fixed inset-0 flex w-screen items-center justify-center p-2">
+          <DialogPanel className="overflow-y-auto max-h-screen md:w-1/2 w-3/4 space-y-4 border bg-warmgrey p-12">
             <section>
               <SubHeading text="Create New Book" />
               <Label label="Title" />
@@ -101,7 +99,7 @@ function BookPopup({ popup, close }: Props) {
               <select
                 name="genre"
                 id="genres"
-                className="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                className="block w-full px-3 py-2.5 bg-lightest border border-default-medium text-heading text-sm rounded-base focus:ring-mediumgreen focus:border-mediumgreen shadow-xs placeholder:text-body"
                 onChange={(e) => setGenre(e.target.value)}
               >
                 {allGenres?.map((genre) => (
@@ -111,7 +109,7 @@ function BookPopup({ popup, close }: Props) {
                 ))}
               </select>
 
-              <Label label="Year" />
+              <Label label="Year of Release" />
               <Input
                 value={year}
                 change={setYear}
@@ -121,7 +119,7 @@ function BookPopup({ popup, close }: Props) {
 
               <Label label="Synopsis" />
               <textarea
-                className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs"
+                className="bg-lightest border border-default-medium text-heading text-sm rounded-base focus:ring-mediumgreen focus:border-mediumgreen block w-full px-3 py-2.5 shadow-xs"
                 value={synopsis}
                 maxLength={maxInput}
                 onChange={(e) => setSynopsis(e.target.value)}
@@ -140,7 +138,7 @@ function BookPopup({ popup, close }: Props) {
             </section>
 
             <Button value="Create Book" click={addBook} />
-            {message && <h1>{message}</h1>}
+            {message && <h1 className="text-red-500">{message}</h1>}
             <Dialog open={addedPopup} onClose={close} className="relative z-50">
               {" "}
               <div className="fixed inset-0 flex w-screen items-center justify-center p-4">

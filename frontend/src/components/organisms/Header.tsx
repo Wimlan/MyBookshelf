@@ -75,7 +75,7 @@ function Header(props: Props) {
       message only if message exists. */}
         {signoutMessage && <p>{signoutMessage}</p>}
       </div>
-      <section className="bg-warmgrey p-5 text-lg flex gap-10 justify-center align-center underline ">
+      <section className="bg-warmgrey  p-5 text-lg flex gap-10 justify-center align-center underline ">
         <Link className="hover:text-warmred" to={`/bookshelf/${props.user}`}>
           My Bookshelf
         </Link>

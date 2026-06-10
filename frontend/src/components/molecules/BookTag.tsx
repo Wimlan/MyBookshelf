@@ -35,11 +35,7 @@ function BookCard({ tag }: Props) {
     }
   }, []);
 
-  return (
-    <>
-      <p className={`${bg}`}>{tag}</p>
-    </>
-  );
+  return <p className={`${bg}`}>{tag}</p>;
 }
 
 export default BookCard;

@@ -49,25 +49,37 @@ function SearchAddBook({ refresh }: Props) {
   }
 
   return (
-    <section className="mt-3 mb-3">
-      <SubHeading text="Search for Book Title" />
-      <div>
-        {message && <p>{message}</p>}
-        <SearchInput change={setSearchText} />
-        <ul>
-          {" "}
-          {searchRes.map((res) => (
-            <li onClick={() => setClickedBook(res)}>{res.title}</li>
-          ))}
-        </ul>
-      </div>
-      {clickedBook && (
-        <div>
-          <p>{clickedBook.title}</p>
-          <Button value="Add to Bookshelf" click={() => addBookshelf()} />
+    <>
+      <section className="pt-5 pb-10 text-center bg-warmred">
+        <div className="text-lightest">
+          <SubHeading text="Search for Book Title" />
         </div>
-      )}
-    </section>
+        <div className="relative w-80 mx-auto">
+          <SearchInput value={searchText} change={setSearchText} />
+          <ul className="absolute mt-0 w-full text-darkest text-left bg-warmgrey ">
+            {" "}
+            {searchRes.map((res) => (
+              <li
+                className="p-2 cursor-pointer hover:bg-mediumgreen hover:text-lightest"
+                onClick={() => {
+                  setClickedBook(res);
+                  setSearchText("");
+                }}
+              >
+                {res.title}
+              </li>
+            ))}
+          </ul>
+        </div>{" "}
+        {clickedBook && (
+          <div className="text-lightest mt-5">
+            <p>{clickedBook.title}</p>
+            <Button value="Add to Bookshelf" click={() => addBookshelf()} />
+            {message && <p className=" text-lightest italic">{message}</p>}
+          </div>
+        )}
+      </section>
+    </>
   );
 }
 

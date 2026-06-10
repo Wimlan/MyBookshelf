@@ -66,7 +66,7 @@ function Signin() {
           {loginMessage}
         </p>
       )}
-      <Button value="Sign In" click={handleSignin} bg="bg-mediumgreen" />
+      <Button value="Sign In" click={handleSignin} />
 
       <div className="mt-2 mb-2">
         <Heading text="No Account Yet?" />

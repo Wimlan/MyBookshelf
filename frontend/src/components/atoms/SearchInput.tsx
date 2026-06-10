@@ -1,11 +1,11 @@
-function Input(props: { change: Function }) {
+function Input(props: { change: Function; value: string }) {
   return (
-    <section className="mt-3 mb-3">
+    <section className="mt-3">
       <div className="relative">
-        <form className="max-w-md mx-auto">
+        <form className="w-full">
           <label
             htmlFor="search"
-            className="block mb-2.5 text-sm font-medium text-heading sr-only "
+            className="block mb-2.5 text-sm font-medium text-darkest sr-only "
           >
             Search
           </label>
@@ -30,9 +30,10 @@ function Input(props: { change: Function }) {
             </div>
             <input
               onChange={(e) => props.change(e.target.value)}
+              value={props.value}
               type="search"
               id="search"
-              className="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+              className="block w-full p-3 ps-9 bg-lightest border border-default-medium text-darkest text-sm rounded-base focus:ring-mediumgreen focus:border-mediumgreen shadow-xs placeholder:text-body"
               placeholder="Search"
               required
             />
