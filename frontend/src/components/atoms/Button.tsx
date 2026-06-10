@@ -11,7 +11,7 @@ export const handleNav = (adress: string, navigate: Function) => {
 function Button({ value, click, bg = "bg-blue-500" }: Props) {
   return (
     <button
-      className={`font-bold py-2 px-4 rounded cursor-pointer ${bg} text-white`}
+      className={`mt-3 mb-3 border border-lightest font-bold py-2 px-4 text-lightest rounded cursor-pointer ${bg} hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}
       onClick={click}
     >
       {value}

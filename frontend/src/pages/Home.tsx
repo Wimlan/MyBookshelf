@@ -24,16 +24,20 @@ function Home() {
   }, []);
   return (
     <article id="home">
-      <section id="intro">
+      <section id="intro" className="w-2/3 mx-auto text-center lg:w-1/2">
         <MainTitle />
         <Heading
           text="With this virtual bookshelf you can easily see the books you own, and
-          keep track of their reading status. Add your real-life friends for
+          keep track of their reading status."
+        />
+        <Heading
+          text=" Add your real-life friends for
           loaning and borrowing, or maybe do a give-away of the books you don't
           need?"
         />
       </section>
       <Signin />
+      //ADD IMG!
       <img src="#" alt="shelf screenshot" />
     </article>
   );

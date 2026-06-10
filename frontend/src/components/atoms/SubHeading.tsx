@@ -1,5 +1,7 @@
 function SecondaryHeader(props: { text: string }) {
-  return <h3>{props.text}</h3>;
+  return (
+    <h3 className="text-base md:text-lg text-lightest m-3">{props.text}</h3>
+  );
 }
 
 export default SecondaryHeader;

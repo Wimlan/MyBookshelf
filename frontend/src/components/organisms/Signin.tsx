@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
 import Label from "../atoms/Label";
+import Heading from "../atoms/Heading";
 
 function Signin() {
   const [userEmail, setUserEmail] = useState("");
@@ -40,7 +41,10 @@ function Signin() {
   }
 
   return (
-    <section id="sign-in">
+    <section
+      id="sign-in"
+      className="pt-3 pb-3 w-2/3 mx-auto text-center lg:w-1/3 "
+    >
       <Label label="Your Email" />
       <Input
         value={userEmail}
@@ -55,12 +59,41 @@ function Signin() {
         placeholder="password"
         change={setUserPass}
       />
-      <Button value="Sign In" click={handleSignin} />
       {/* Error message from fetch. Shows
       message only if message exists. */}
-      {loginMessage && <p>{loginMessage}</p>}
-      <p>No account yet?</p>
-      <Link to="/createuser">Create New User</Link>
+      {loginMessage && (
+        <p className="text-red-500 bg-warmgrey w-fit mx-auto p-1">
+          {loginMessage}
+        </p>
+      )}
+      <Button value="Sign In" click={handleSignin} bg="bg-mediumgreen" />
+
+      <div className="mt-2 mb-2">
+        <Heading text="No Account Yet?" />
+        <Link
+          to="/createuser"
+          className="inline-flex items-center justify-center p-5 text-darkest font-bold border-4 border-solid border-mediumgreen rounded hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 rounded-base bg-warmgrey"
+        >
+          <span className="w-full">Create New User</span>
+          <svg
+            className="w-6 h-6 ms-1 rtl:rotate-180"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="50"
+            height="50"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 12H5m14 0-4 4m4-4-4-4"
+            />
+          </svg>
+        </Link>
+      </div>
     </section>
   );
 }
