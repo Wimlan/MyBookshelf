@@ -54,13 +54,33 @@ function CreateUser() {
       <MainTitle />
       <Heading text="Create New User" />
       <Label label="Your Username" />
-      <Input type="text" change={setUserName} placeholder="name" />
+      <Input
+        value={userName}
+        type="text"
+        change={setUserName}
+        placeholder="name"
+      />
       <Label label="Your Email" />
-      <Input type="text" change={setUserEmail} placeholder="name@example.com" />
+      <Input
+        value={userEmail}
+        type="text"
+        change={setUserEmail}
+        placeholder="name@example.com"
+      />
       <Label label="Your Password" />
-      <Input type="password" placeholder="password" change={setUserPass} />
+      <Input
+        value={userPass}
+        type="password"
+        placeholder="password"
+        change={setUserPass}
+      />
       <Label label="Your Password" />
-      <Input type="password" placeholder="password" change={setRepeatPass} />
+      <Input
+        value={repeatPass}
+        type="password"
+        placeholder="password"
+        change={setRepeatPass}
+      />
       <Link to="/privacypolicy">Privacy Policy</Link>
       <Button value="Create User" click={handleCreation} />
       {/* Error message from fetch. Shows message

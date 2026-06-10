@@ -1,21 +1,7 @@
 import { useState, useEffect } from "react";
 import BookTag from "../molecules/BookTag";
 import BookPopup from "../molecules/BookPopup";
-
-export interface Book {
-  id: number;
-  title: string;
-  year: number;
-  author: string;
-  synopsis: string;
-  image: string;
-  tags: Tags[];
-}
-
-interface Tags {
-  id: number;
-  tag: string;
-}
+import type { Book } from "../../pages/Bookshelf";
 
 interface Props {
   bookshelf: Book[];

@@ -91,6 +91,7 @@ function Header(props: Props) {
             <SubHeading text="A deleted account cannot be recovered." />
             <Label label="Your Password" />
             <Input
+              value={userPass}
               type="password"
               placeholder="password"
               change={setUserPass}

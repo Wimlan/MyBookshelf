@@ -4,6 +4,9 @@ import MainTitle from "../components/atoms/MainTitle";
 import Header from "../components/organisms/Header";
 import BookList from "../components/organisms/BookList";
 import SearchAddBook from "../components/molecules/SearchAddBook";
+import AddBook from "../components/molecules/AddBook";
+import SubHeading from "../components/atoms/SubHeading";
+import Button from "../components/atoms/Button";
 
 export interface Book {
   id: number;
@@ -12,18 +15,25 @@ export interface Book {
   author: string;
   synopsis: string;
   image: string;
-  tags: Tags[];
+  tags: Tag[];
+  genres: Genre[];
 }
 
-export interface Tags {
+export interface Tag {
   id: number;
   tag: string;
+}
+
+export interface Genre {
+  id: number;
+  genre: string;
 }
 
 function Bookshelf() {
   const [bookshelf, setBookshelf] = useState<Book[]>([]);
   const { userName } = useParams();
   const navigate = useNavigate();
+  const [popup, setPopup] = useState(false);
 
   //Checks if user is logged in in backend, and if not navigates to home
   //This way an unauthorized user cant access someone else's page
@@ -66,6 +76,9 @@ function Bookshelf() {
       <MainTitle user={userName} />
       <Header user={userName} />
       <SearchAddBook refresh={fetchBookshelf} />
+      <AddBook popup={popup} close={() => setPopup(false)} />
+      <SubHeading text="Can't find your book?" />
+      <Button value="Create a New Book" click={() => setPopup(true)} />
       <BookList bookshelf={bookshelf} fetchBookshelf={fetchBookshelf} />
     </>
   );

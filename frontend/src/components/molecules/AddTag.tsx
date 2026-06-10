@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
 import type { SubmitEvent } from "react";
-import type { Book } from "../../pages/Bookshelf";
+import type { Book, Tag } from "../../pages/Bookshelf";
 import Button from "../atoms/Button";
 
 interface Props {
   refresh: () => void;
   clickedbook: Book;
-}
-
-interface Tag {
-  id: number;
-  tag: string;
 }
 
 function BookCard({ refresh, clickedbook }: Props) {

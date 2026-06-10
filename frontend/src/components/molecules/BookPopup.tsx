@@ -53,6 +53,7 @@ function BookPopup({ popup, close, clickedbook, refresh }: Props) {
                 <SubHeading text={clickedbook.title} />
                 <p>{clickedbook.year}</p>
                 <p>{clickedbook.author}</p>
+                <p>{clickedbook.genres[0].genre}</p>
                 <p>{clickedbook.synopsis}</p>
               </div>
               <div>

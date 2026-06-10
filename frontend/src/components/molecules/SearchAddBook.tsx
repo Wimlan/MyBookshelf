@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import SearchInput from "../atoms/SearchInput";
 import SubHeading from "../atoms/SubHeading";
 import Button from "../atoms/Button";

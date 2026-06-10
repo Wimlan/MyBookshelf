@@ -65,7 +65,7 @@ http://localhost:3000/books/bookshelf/<br>
 <br>
 <br>
 **POST: Adds a new book to the Books table**<br>
-http://localhost:3000/books/addbook/:id?genre=GENRE<br>
+http://localhost:3000/books/addbook?genre=GENRE<br>
 <br>
 =>Book is sent in body. JSON Format:<br><br>
 {

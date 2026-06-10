@@ -98,7 +98,7 @@ router.get("/search", async (req, res) => {
 });
 
 //GET for mapping out a users bookshelf in frontend
-router.get("/bookshelf/", isAuthenticated, async (req, res) => {
+router.get("/bookshelf", isAuthenticated, async (req, res) => {
   const userId = req.session.user;
 
   //Get all books in the users bookshelf(books id connected with the correct user id)
@@ -142,53 +142,6 @@ router.get("/bookshelf/", isAuthenticated, async (req, res) => {
   }));
 
   res.send(result);
-});
-
-//Adds a new book to the books table
-router.post("/addbook/:id", isAuthenticated, async (req, res) => {
-  const id = Number(req.params.id);
-  const newBook: Book = req.body;
-  const genre = req.query.genre;
-  const missing =
-    !newBook ||
-    newBook.title.length < 1 ||
-    newBook.author.length < 1 ||
-    newBook.year < 1 ||
-    newBook.synopsis.length < 1 ||
-    newBook.image.length < 1;
-
-  if (!genre) {
-    res.status(404).send("Query parameter 'genre' is missing or wrong.");
-    return;
-  }
-  const genreId: QueryResult<Pick<Genre, "id">> = await database.query(
-    `SELECT id FROM Genres WHERE genre ILIKE $1`,
-    [genre],
-  );
-
-  // add book from newBook(body) with genre
-  if (missing) {
-    res.status(404).send("Body missing");
-  } else {
-    try {
-      await database.query(
-        "INSERT INTO Books(title, author, year, synopsis, genre_id, image, added_by) VALUES ($1, $2, $3, $4, $5, $6, $7);",
-        [
-          newBook!.title,
-          newBook!.author,
-          newBook!.year,
-          newBook!.synopsis,
-          genreId.rows[0]!.id,
-          newBook!.image,
-          id,
-        ],
-      );
-      res.status(201).send("Book created.");
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Book could not be added.");
-    }
-  }
 });
 
 //Adds a new book to the users bookshelf
@@ -253,7 +206,7 @@ router.delete("/removefromshelf/:bookid", isAuthenticated, async (req, res) => {
 
 //TAGS
 
-//GET for mapping out a users bookshelf in frontend
+//GET for getting all tags
 router.get("/tags", async (req, res) => {
   //Get all tags
   const result: QueryResult<Bookshelf> =
@@ -333,6 +286,71 @@ router.delete("/removetag/:bookid", isAuthenticated, async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send("Tag could not be removed.");
+  }
+});
+
+//BOOKS TABLE
+//GET for getting all genres
+router.get("/genres", async (req, res) => {
+  //Get all tags
+  const result: QueryResult<Bookshelf> = await database.query(
+    "SELECT * FROM Genres",
+  );
+
+  const genres = result.rows;
+
+  res.send(genres);
+});
+
+//Adds a new book to the books table
+router.post("/addbook", isAuthenticated, async (req, res) => {
+  const id = req.session.user;
+  const newBook: Book = req.body;
+  const genre = req.query.genre;
+  const missing =
+    !newBook ||
+    newBook.title.length < 1 ||
+    newBook.author.length < 1 ||
+    newBook.year < 1 ||
+    newBook.synopsis.length < 1 ||
+    newBook.image.length < 1;
+
+  if (!genre) {
+    res
+      .status(404)
+      .json({ message: "Query parameter 'genre' is missing or wrong." });
+    return;
+  }
+  const genreId: QueryResult<Pick<Genre, "id">> = await database.query(
+    `SELECT id FROM Genres WHERE genre ILIKE $1`,
+    [genre],
+  );
+
+  // add book from newBook(body) with genre
+  if (missing) {
+    res.status(404).json({ message: "Information missing" });
+  } else {
+    try {
+      await database.query(
+        "INSERT INTO Books(title, author, year, synopsis, genre_id, image, added_by) VALUES ($1, $2, $3, $4, $5, $6, $7);",
+        [
+          newBook!.title,
+          newBook!.author,
+          newBook!.year,
+          newBook!.synopsis,
+          genreId.rows[0]!.id,
+          newBook!.image,
+          id,
+        ],
+      );
+      res.status(201).json({ message: "Book created." });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message:
+          "Book could not be added. It might already exist, but might not yet be verified. Try again in a couple of days.",
+      });
+    }
   }
 });
 

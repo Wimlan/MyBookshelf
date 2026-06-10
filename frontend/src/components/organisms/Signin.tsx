@@ -42,9 +42,19 @@ function Signin() {
   return (
     <section id="sign-in">
       <Label label="Your Email" />
-      <Input type="text" change={setUserEmail} placeholder="name@example.com" />
+      <Input
+        value={userEmail}
+        type="text"
+        change={setUserEmail}
+        placeholder="name@example.com"
+      />
       <Label label="Your Password" />
-      <Input type="password" placeholder="password" change={setUserPass} />
+      <Input
+        value={userPass}
+        type="password"
+        placeholder="password"
+        change={setUserPass}
+      />
       <Button value="Sign In" click={handleSignin} />
       {/* Error message from fetch. Shows
       message only if message exists. */}
