@@ -38,7 +38,7 @@ function SearchAddBook({ refresh }: Props) {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message);
+        setClickedBook(undefined);
         refresh();
       } else {
         setMessage(data.message);
@@ -50,7 +50,7 @@ function SearchAddBook({ refresh }: Props) {
 
   return (
     <>
-      <section className="pt-5 pb-10 text-center bg-warmred">
+      <section className="pt-1 pb-5 text-center bg-darkblue">
         <div className="text-lightest">
           <SubHeading text="Search for Book Title" />
         </div>
@@ -60,10 +60,11 @@ function SearchAddBook({ refresh }: Props) {
             {" "}
             {searchRes.map((res) => (
               <li
-                className="p-2 cursor-pointer hover:bg-mediumgreen hover:text-lightest"
+                className=" cursor-pointer hover:bg-mediumgreen hover:text-lightest"
                 onClick={() => {
                   setClickedBook(res);
                   setSearchText("");
+                  setMessage("");
                 }}
               >
                 {res.title}

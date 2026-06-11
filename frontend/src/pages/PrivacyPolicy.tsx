@@ -9,20 +9,24 @@ function PrivacyPolicy() {
   const navigate = useNavigate();
 
   return (
-    <article id="privacy-policy">
+    <article
+      id="privacy-policy"
+      className="text-left text-lightest w-3/4 md:w-2/3 lg:w-1/2 mx-auto"
+    >
       <MainTitle />
-      <Heading text="Privacy Policy – My Bookshelf" />
-      <p>Last updated: June 2026</p>
-      <p>
-        <span>My Bookshelf</span> is a personal project created and operated by
-        an individual based in Gothenburg, Sweden. It is not affiliated with any
-        company or organization.
-      </p>
+      <section className="pb-3">
+        <Heading text="Privacy Policy – My Bookshelf" />
+        <p>Last updated: June 2026</p>
+        <p>
+          <span>My Bookshelf</span> is a personal project created and operated
+          by an individual based in Gothenburg, Sweden. It is not affiliated
+          with any company or organization.
+        </p>
+      </section>
 
-      <section id="data">
+      <section id="data" className="border-t-4 pb-3">
         <SubHeading text="What data we collect" />
-        <p>What data we collect</p>
-        <ol>
+        <ul className="text-body list-disc list-inside mb-2">
           <li>
             Your <span>username</span>
           </li>
@@ -33,17 +37,17 @@ function PrivacyPolicy() {
             Your <span>password</span> (hashed using Argon2 — we never store
             your password in plain text)
           </li>
-        </ol>
+        </ul>
 
         <p>When you use the app, we also store:</p>
-        <ol>
+        <ul className="text-body list-disc list-inside mb-2">
           <li>
             The <span>books</span> you add to your virtual bookshelf
           </li>
-        </ol>
+        </ul>
       </section>
 
-      <section id="why-collect">
+      <section id="why-collect" className="border-t-4 pb-3">
         <SubHeading text="Why we collect it" />
         <p>
           We collect this data solely to provide the service — creating your
@@ -51,7 +55,7 @@ function PrivacyPolicy() {
         </p>
       </section>
 
-      <section id="who-share">
+      <section id="who-share" className="border-t-4 pb-3">
         <SubHeading text="Who we share it with" />
         <p>
           We do not share your data with anyone. No third parties, no
@@ -59,7 +63,7 @@ function PrivacyPolicy() {
         </p>
       </section>
 
-      <section id="how-long">
+      <section id="how-long" className="border-t-4 pb-3">
         <SubHeading text="How long we keep it" />
         <p>
           Your data is kept for as long as your account exists. You can request
@@ -68,7 +72,7 @@ function PrivacyPolicy() {
         </p>
       </section>
 
-      <section id="your-rights">
+      <section id="your-rights" className="border-t-4 pb-3">
         <SubHeading text="Your rights (GDPR)" />
         <p>
           If you are located in the EU/EEA, you have the right to access,
@@ -77,7 +81,7 @@ function PrivacyPolicy() {
         </p>
       </section>
 
-      <section id="cookies">
+      <section id="cookies" className="border-t-4 pb-3">
         <SubHeading text="Cookies" />
         <p>
           We use a session cookie to keep you logged in. No tracking or
@@ -85,17 +89,19 @@ function PrivacyPolicy() {
         </p>
       </section>
 
-      <section id="contact">
+      <section id="contact" className="border-t-4 pb-3">
         <SubHeading text="Contact" />
         <p>
           If you have any questions about this policy, you can reach us at{" "}
           <span>[wilma.yasuda@gmail.com]</span>.
         </p>
       </section>
-      <Button
-        value="Go Back"
-        click={() => handleNav(`/createuser`, navigate)}
-      />
+      <div className="flex justify-center align-center mt-5 mb-10">
+        <Button
+          value="Go Back"
+          click={() => handleNav(`/createuser`, navigate)}
+        />
+      </div>
     </article>
   );
 }

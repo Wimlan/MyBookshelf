@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { SubmitEvent } from "react";
 import type { Book, Tag } from "../../pages/Bookshelf";
 import Button from "../atoms/Button";
+import BookTag from "./BookTag";
 
 interface Props {
   refresh: () => void;
@@ -90,7 +91,7 @@ function BookCard({ refresh, clickedbook }: Props) {
 
   return (
     <>
-      <form className="max-w-sm mx-auto" onSubmit={addTag}>
+      <form className="max-w-sm mx-auto mt-7 mb-5" onSubmit={addTag}>
         <label
           htmlFor="countries"
           className="block mb-2.5 text-sm font-medium text-heading"
@@ -100,7 +101,7 @@ function BookCard({ refresh, clickedbook }: Props) {
         <select
           name="tag"
           id="tags"
-          className="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+          className="block w-full px-3 py-2.5 bg-lightest border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
         >
           {allTags?.map((tag) => (
             <option key={tag.id} value={tag.tag}>
@@ -108,13 +109,13 @@ function BookCard({ refresh, clickedbook }: Props) {
             </option>
           ))}
         </select>
-        <button type="submit">Add Tag</button>
+        <Button value="Add Tag" type="submit" />
         {tagsMessage && <h1>{tagsMessage}</h1>}
       </form>
-      <ul>
+      <ul className="grid grid-cols-1 lg:grid-cols-2 max-w-2xl mx-auto items-center">
         {booktags.map((tag) => (
-          <li key={tag.id} value={tag.tag}>
-            {tag.tag}
+          <li className="flex items-center gap-2">
+            <BookTag key={tag.id} tag={tag.tag} />
             <Button value="Remove Tag" click={() => removeTag(tag.tag)} />
           </li>
         ))}

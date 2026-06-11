@@ -48,7 +48,7 @@ function BookList({ bookshelf, fetchBookshelf }: Props) {
                   className="bg-mediumgreen w-50 h-70 mx-auto flex items-center justify-center "
                   onClick={() => handlePopup(book)}
                 >
-                  <p className="text-xl text-center text-lightest">
+                  <p className="text-3xl text-center text-lightest">
                     {book.title}
                   </p>
                 </div>
@@ -61,7 +61,10 @@ function BookList({ bookshelf, fetchBookshelf }: Props) {
           <BookPopup
             clickedbook={clickedBook}
             popup={popup}
-            close={() => setPopup(false)}
+            close={() => {
+              setPopup(false);
+              setClickedBook(undefined);
+            }}
             refresh={fetchBookshelf}
           />
         )}

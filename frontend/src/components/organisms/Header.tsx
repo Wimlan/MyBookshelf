@@ -79,7 +79,7 @@ function Header(props: Props) {
         <Link className="hover:text-warmred" to={`/bookshelf/${props.user}`}>
           My Bookshelf
         </Link>
-        <MenuDropdown button="My account" links={links} />
+        <MenuDropdown button="My Account" links={links} />
       </section>
 
       <Dialog
