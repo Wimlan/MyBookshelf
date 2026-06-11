@@ -116,7 +116,7 @@ function BookCard({ refresh, clickedbook }: Props) {
         {booktags.map((tag) => (
           <li className="flex items-center gap-2">
             <BookTag key={tag.id} tag={tag.tag} />
-            <Button value="Remove Tag" click={() => removeTag(tag.tag)} />
+            <Button value="Remove" click={() => removeTag(tag.tag)} />
           </li>
         ))}
       </ul>

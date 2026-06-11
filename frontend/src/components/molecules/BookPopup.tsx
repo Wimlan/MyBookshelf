@@ -47,7 +47,7 @@ function BookPopup({ popup, close, clickedbook, refresh }: Props) {
     <>
       <Dialog open={popup} onClose={close} className="relative z-50">
         <div className="fixed inset-0 flex w-screen items-center justify-center p-2">
-          <DialogPanel className="overflow-y-auto max-h-screen xl:w-[60%] lg:[70%] w-[70%] space-y-4 border bg-warmgrey p-12">
+          <DialogPanel className="overflow-y-auto max-h-screen xl:w-[60%] lg:[70%] w-[90%] space-y-4 border bg-warmgrey p-12">
             <section className="flex flex-col md:flex-row gap-4">
               <div className="flex flex-col gap-2">
                 <Heading text={clickedbook.title} />
@@ -71,12 +71,13 @@ function BookPopup({ popup, close, clickedbook, refresh }: Props) {
               <AddTag clickedbook={clickedbook} refresh={refresh} />
             </section>
 
-            <section className="flex items-center justify-center">
+            <section className="flex flex-col items-center justify-center">
               <Button
                 value="Remove Book"
                 bg="bg-warmred"
                 click={() => setRemovePopup(true)}
               />
+              <Button value="Go Back" click={() => close()} />
               <Dialog
                 open={removePopup}
                 onClose={() => setRemovePopup(false)}

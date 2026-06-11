@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Signin from "../components/organisms/Signin.tsx";
 import MainTitle from "../components/atoms/MainTitle.tsx";
 import Heading from "../components/atoms/Heading.tsx";
+import BookshelfImg from "../assets/bookshelfex.png";
 
 function Home() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function Home() {
       <MainTitle />
       <section
         id="intro"
-        className="w-2/3 mx-auto text-center text-lightest lg:w-1/2"
+        className="w-[90%] mx-auto text-center text-lightest lg:w-1/2"
       >
         <Heading
           text="With this virtual bookshelf you can easily see the books you own, and
@@ -40,8 +41,12 @@ function Home() {
         />
       </section>
       <Signin />
-      //ADD IMG!
-      <img src="#" alt="shelf screenshot" />
+      <img
+        className="mx-auto"
+        src={BookshelfImg}
+        width="900"
+        alt="shelf screenshot"
+      />
     </article>
   );
 }

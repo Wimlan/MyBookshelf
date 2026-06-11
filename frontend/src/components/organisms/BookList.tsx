@@ -30,8 +30,8 @@ function BookList({ bookshelf, fetchBookshelf }: Props) {
 
   return (
     <>
-      <section className="my-10 w-3/4 mx-auto">
-        <ul className="grid frid-cols-2 md:grid-cols-4 gap-y-4">
+      <section className="my-10 w-[95%] lg:w-[80%] mx-auto">
+        <ul className="grid grid-cols-2 md:grid-cols-4 gap-y-4">
           {bookshelf &&
             //With [...bookshelf] the variable itself doesn't mutate and keeps it original state when used elsewhere
             [...bookshelf].reverse().map((book) => (
@@ -39,13 +39,13 @@ function BookList({ bookshelf, fetchBookshelf }: Props) {
                 key={book.id}
                 className="flex flex-col gap-2 border-b-30 border-warmred"
               >
-                <div className="flex flex-col flex-wrap mb-1 flex-1 w-1/2 mx-auto gap-1 justify-end">
+                <div className="flex flex-col flex-wrap mb-1 flex-1  mx-auto gap-1 justify-end">
                   {book.tags.map((tag) => (
                     <BookTag key={tag.id} tag={tag.tag} />
                   ))}
                 </div>
                 <div
-                  className="bg-mediumgreen w-50 h-70 mx-auto flex items-center justify-center "
+                  className="bg-mediumgreen w-40 sm:w-50 md:w-40 lg:w-50 h-70 mx-auto flex items-center justify-center "
                   onClick={() => handlePopup(book)}
                 >
                   <p className="text-3xl text-center text-lightest">

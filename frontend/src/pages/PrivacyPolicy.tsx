@@ -11,7 +11,7 @@ function PrivacyPolicy() {
   return (
     <article
       id="privacy-policy"
-      className="text-left text-lightest w-3/4 md:w-2/3 lg:w-1/2 mx-auto"
+      className="text-left text-lightest w-[90%] md:w-2/3 lg:w-1/2 mx-auto"
     >
       <MainTitle />
       <section className="pb-3">

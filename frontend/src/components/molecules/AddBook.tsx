@@ -76,7 +76,7 @@ function BookPopup({ popup, close }: Props) {
     <>
       <Dialog open={popup} onClose={close} className="relative z-50 ">
         <div className=" fixed inset-0 flex w-screen items-center justify-center p-2">
-          <DialogPanel className="overflow-y-auto max-h-screen md:w-1/2 w-3/4 space-y-4 border bg-warmgrey p-12">
+          <DialogPanel className="overflow-y-auto max-h-screen md:w-1/2 w-[90%] space-y-4 border bg-warmgrey p-12">
             <section>
               <SubHeading text="Create New Book" />
               <Label label="Title" />
@@ -138,7 +138,9 @@ function BookPopup({ popup, close }: Props) {
             </section>
 
             <Button value="Create Book" click={addBook} />
+            <Button value="Cancel" click={() => close()} bg="bg-gray-500" />
             {message && <h1 className="text-red-500">{message}</h1>}
+
             <Dialog open={addedPopup} onClose={close} className="relative z-50">
               {" "}
               <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
