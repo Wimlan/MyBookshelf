@@ -96,6 +96,7 @@ function BookPopup({ popup, close, clickedbook, refresh }: Props) {
                       click={() => setRemovePopup(false)}
                       value="Cancel"
                     />
+                    {message && <p>{message}</p>}
                   </DialogPanel>
                 </div>
               </Dialog>

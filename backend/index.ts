@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import { database, pool } from "./database.ts";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
@@ -37,6 +38,8 @@ app.get("/api", async (_request, response) => {
 
   response.send(rows);
 });
+
+app.use(express.static(path.join(path.resolve(), "dist")));
 
 app.listen(3000, () => {
   console.log("Webbtjänsten kan nu ta emot anrop.");
