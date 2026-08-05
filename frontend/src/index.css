@@ -5,8 +5,10 @@
   --color-lightest: rgb(247, 245, 243);
   --color-darkblue: rgb(11, 57, 72);
   --color-mediumgreen: rgb(73, 125, 122);
+  --color-mediumdarkgreen: rgb(48, 92, 90);
   --color-warmgrey: rgb(231, 224, 218);
   --color-warmred: rgb(119, 41, 4);
+  --color-darkred: rgb(78, 32, 10);
   /* --font-poppins: Poppins, sans-serif; */
 
   /* TAGS */
