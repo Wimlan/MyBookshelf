@@ -1,10 +1,9 @@
+LÄNK HEMSIDA: https://mybookshelf-gd5p.onrender.com
+
 **BACKEND**
 
 Bygg frontend-projektet och återskapa dist-mappen samt starta webbtjänsten:
 npm run build-frontend
-npm run dev
-
-För utveckling starta även Frontend:
 npm run dev
 
 ---
@@ -14,7 +13,7 @@ USER API
 ---
 
 **POST: Sign In**<br>
-/user/signin<br>
+api/user/signin<br>
 
 =>Email and Password is sent in body. JSON Format:<br><br>
 {
@@ -27,10 +26,10 @@ TEST: "email": "wilma.yasuda@gmail.com",<br>
 "password": "mysecret" <br>
 <br><br>
 **GET: Sign Out**<br>
-/user/signout<br>
+api/user/signout<br>
 <br>
 **POST: Create User**<br>
-/user/signup<br>
+api/user/signup<br>
 
 =>Username, Email and Password is sent in body. JSON Format:<br><br>
 {
@@ -41,7 +40,7 @@ TEST: "email": "wilma.yasuda@gmail.com",<br>
 <br><br>
 
 **DELETE: Delete User**<br>
-/user/delete/<br>
+api/user/delete/<br>
 
 =>Body: user password is required in body<br>
 <br><br>
@@ -54,25 +53,25 @@ BOOKS API
 
 -----_FOR ADMIN_-----<br><br>
 **GET: Get all books and check with query if verified(Sign in not needed)**<br>
-/books/notverified<br>
+api/books/notverified<br>
 <br>
 **PATCH: Verify book and add to shelf(Sign in not needed)**<br>
-/books/verify/:bookid<br>
+api/books/verify/:bookid<br>
 <br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 -----_FOR USER_-----<br><br>
 **GET: for the frontend Title Search Function**<br>
-/books/search?title=WORD<br>
+api/books/search?title=WORD<br>
 <br>
 =>Replace WORD with the word you want to search for<br>
 <br>
 **GET: Gets a users whole bookshelf. For mapping out a users bookshelf in frontend**<br>
-/books/bookshelf/<br>
+api/books/bookshelf/<br>
 <br>
 <br>
 **POST: Adds a new book to the Books table**<br>
-/books/addbook?genre=GENRE<br>
+api/books/addbook?genre=GENRE<br>
 <br>
 =>Book is sent in body. JSON Format:<br><br>
 {
@@ -88,12 +87,12 @@ BOOKS API
 =>Needs to be verified after in order to show up in users bookshelf<br>
 <br>
 **POST: Adds a new book to the users bookshelf**<br>
-/books/addtoshelf/:bookid<br>
+api/books/addtoshelf/:bookid<br>
 <br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 **POST: Adds a TAG to a book in the users bookshelf**<br>
-/books/addtag/:bookid<br>
+api/books/addtag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
@@ -102,7 +101,7 @@ BOOKS API
 <br>
 
 **DELETE: deleting a TAG from users bookshelf**<br>
-/books/removetag/:bookid<br>
+api/books/removetag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
@@ -111,7 +110,7 @@ BOOKS API
 <br>
 
 **DELETE: deleting a book from a users bookshelf**<br>
-/books/removefromshelf/:bookid<br>
+api/books/removefromshelf/:bookid<br>
 
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
