@@ -18,16 +18,13 @@ function BookPopup({ popup, close, clickedbook, refresh }: Props) {
 
   async function removeFromShelf() {
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/removefromshelf/${clickedbook.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+      const res = await fetch(`/api/books/removefromshelf/${clickedbook.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+      });
 
       const data = await res.json();
 

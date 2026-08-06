@@ -17,7 +17,7 @@ function Signin() {
   //If error: Returns error message.
   async function handleSignin() {
     try {
-      const res = await fetch("http://localhost:3000/user/signin", {
+      const res = await fetch("/api/user/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

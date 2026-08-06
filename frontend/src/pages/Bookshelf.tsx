@@ -39,7 +39,7 @@ function Bookshelf() {
   //This way an unauthorized user cant access someone else's page
   useEffect(() => {
     async function checkSession() {
-      const res = await fetch("http://localhost:3000/user/session", {
+      const res = await fetch("/api/user/session", {
         credentials: "include",
       });
 
@@ -60,7 +60,7 @@ function Bookshelf() {
 
   async function fetchBookshelf() {
     try {
-      const res = await fetch(`http://localhost:3000/books/bookshelf/`, {
+      const res = await fetch(`/api/books/bookshelf/`, {
         credentials: "include",
       });
       const data = await res.json();

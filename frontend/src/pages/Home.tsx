@@ -12,7 +12,7 @@ function Home() {
   //This way the user won't have to log in twice
   useEffect(() => {
     async function checkSession() {
-      const res = await fetch("http://localhost:3000/user/session", {
+      const res = await fetch("/api/user/session", {
         credentials: "include",
       });
 

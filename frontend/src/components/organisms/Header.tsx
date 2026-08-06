@@ -28,7 +28,7 @@ function Header(props: Props) {
 
   async function handleSignout() {
     try {
-      const res = await fetch("http://localhost:3000/user/signout", {
+      const res = await fetch("/api/user/signout", {
         method: "GET",
         credentials: "include",
       });
@@ -45,7 +45,7 @@ function Header(props: Props) {
 
   async function handleDelete() {
     try {
-      const res = await fetch("http://localhost:3000/user/delete", {
+      const res = await fetch("/api/user/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

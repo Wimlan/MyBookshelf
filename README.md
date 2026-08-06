@@ -1,5 +1,12 @@
 **BACKEND**
 
+Bygg frontend-projektet och återskapa dist-mappen samt starta webbtjänsten:
+npm run build-frontend
+npm run dev
+
+För utveckling starta även Frontend:
+npm run dev
+
 ---
 
 USER API
@@ -7,7 +14,7 @@ USER API
 ---
 
 **POST: Sign In**<br>
-http://localhost:3000/user/signin<br>
+/user/signin<br>
 
 =>Email and Password is sent in body. JSON Format:<br><br>
 {
@@ -20,10 +27,10 @@ TEST: "email": "wilma.yasuda@gmail.com",<br>
 "password": "mysecret" <br>
 <br><br>
 **GET: Sign Out**<br>
-http://localhost:3000/user/signout<br>
+/user/signout<br>
 <br>
 **POST: Create User**<br>
-http://localhost:3000/user/signup<br>
+/user/signup<br>
 
 =>Username, Email and Password is sent in body. JSON Format:<br><br>
 {
@@ -34,7 +41,7 @@ http://localhost:3000/user/signup<br>
 <br><br>
 
 **DELETE: Delete User**<br>
-http://localhost:3000/user/delete/<br>
+/user/delete/<br>
 
 =>Body: user password is required in body<br>
 <br><br>
@@ -47,25 +54,25 @@ BOOKS API
 
 -----_FOR ADMIN_-----<br><br>
 **GET: Get all books and check with query if verified(Sign in not needed)**<br>
-http://localhost:3000/books/notverified<br>
+/books/notverified<br>
 <br>
 **PATCH: Verify book and add to shelf(Sign in not needed)**<br>
-http://localhost:3000/books/verify/:bookid<br>
+/books/verify/:bookid<br>
 <br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 -----_FOR USER_-----<br><br>
 **GET: for the frontend Title Search Function**<br>
-http://localhost:3000/books/search?title=WORD<br>
+/books/search?title=WORD<br>
 <br>
 =>Replace WORD with the word you want to search for<br>
 <br>
 **GET: Gets a users whole bookshelf. For mapping out a users bookshelf in frontend**<br>
-http://localhost:3000/books/bookshelf/<br>
+/books/bookshelf/<br>
 <br>
 <br>
 **POST: Adds a new book to the Books table**<br>
-http://localhost:3000/books/addbook?genre=GENRE<br>
+/books/addbook?genre=GENRE<br>
 <br>
 =>Book is sent in body. JSON Format:<br><br>
 {
@@ -81,12 +88,12 @@ http://localhost:3000/books/addbook?genre=GENRE<br>
 =>Needs to be verified after in order to show up in users bookshelf<br>
 <br>
 **POST: Adds a new book to the users bookshelf**<br>
-http://localhost:3000/books/addtoshelf/:bookid<br>
+/books/addtoshelf/:bookid<br>
 <br>
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>
 **POST: Adds a TAG to a book in the users bookshelf**<br>
-http://localhost:3000/books/addtag/:bookid<br>
+/books/addtag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
@@ -95,7 +102,7 @@ http://localhost:3000/books/addtag/:bookid<br>
 <br>
 
 **DELETE: deleting a TAG from users bookshelf**<br>
-http://localhost:3000/books/removetag/:bookid<br>
+/books/removetag/:bookid<br>
 
 =>Tag is sent in body. JSON Format:<br><br>
 {"tag" : "Borrowing"}
@@ -104,7 +111,7 @@ http://localhost:3000/books/removetag/:bookid<br>
 <br>
 
 **DELETE: deleting a book from a users bookshelf**<br>
-http://localhost:3000/books/removefromshelf/:bookid<br>
+/books/removefromshelf/:bookid<br>
 
 =>Adressparameter(:bookid): Id from Books table.<br>
 <br>

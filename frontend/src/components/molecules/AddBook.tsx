@@ -26,7 +26,7 @@ function BookPopup({ popup, close }: Props) {
   useEffect(() => {
     async function fetchTags() {
       try {
-        const res = await fetch(`http://localhost:3000/books/genres/`);
+        const res = await fetch(`/api/books/genres/`);
         const data = await res.json();
         setAllGenres(data);
       } catch (err) {
@@ -38,23 +38,20 @@ function BookPopup({ popup, close }: Props) {
 
   async function addBook() {
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/addbook?genre=${genre}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title,
-            author,
-            year,
-            synopsis,
-            image,
-          }),
-          credentials: "include",
+      const res = await fetch(`/api/books/addbook?genre=${genre}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          title,
+          author,
+          year,
+          synopsis,
+          image,
+        }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         setaddedPopup(true);

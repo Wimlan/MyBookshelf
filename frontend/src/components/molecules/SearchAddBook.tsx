@@ -16,9 +16,7 @@ function SearchAddBook({ refresh }: Props) {
 
   useEffect(() => {
     async function handleSearch() {
-      const res = await fetch(
-        `http://localhost:3000/books/search?title=${searchText}`,
-      );
+      const res = await fetch(`/api/books/search?title=${searchText}`);
       const data = await res.json();
       setSearchRes(data);
     }
@@ -27,13 +25,10 @@ function SearchAddBook({ refresh }: Props) {
 
   async function addBookshelf() {
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/addtoshelf/${clickedBook?.id}`,
-        {
-          method: "POST",
-          credentials: "include",
-        },
-      );
+      const res = await fetch(`/api/books/addtoshelf/${clickedBook?.id}`, {
+        method: "POST",
+        credentials: "include",
+      });
 
       const data = await res.json();
 

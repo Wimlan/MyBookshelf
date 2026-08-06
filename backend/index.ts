@@ -3,7 +3,7 @@ import path from "path";
 import { database, pool } from "./database.ts";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import cors from "cors";
+// import cors from "cors";
 import user from "./user.ts";
 import books from "./books.ts";
 
@@ -27,17 +27,18 @@ app.use(
     cookie: { secure: false, sameSite: "lax" },
   }),
 );
-app.use("/user", user);
-app.use("/books", books);
 
-app.get("/api", async (_request, response) => {
-  const { rows } = await database.query(
-    "SELECT * FROM books WHERE id = $1",
-    [2],
-  );
+app.use("/api/user", user);
+app.use("/api/books", books);
 
-  response.send(rows);
-});
+// app.get("/api", async (_request, response) => {
+//   const { rows } = await database.query(
+//     "SELECT * FROM books WHERE id = $1",
+//     [2],
+//   );
+
+//   response.send(rows);
+// });
 
 app.use(express.static(path.join(path.resolve(), "dist")));
 

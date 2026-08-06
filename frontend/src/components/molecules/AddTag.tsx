@@ -17,7 +17,7 @@ function BookCard({ refresh, clickedbook }: Props) {
   useEffect(() => {
     async function fetchTags() {
       try {
-        const res = await fetch(`http://localhost:3000/books/tags/`);
+        const res = await fetch(`/api/books/tags/`);
         const data = await res.json();
         setAllTags(data);
         console.log(data);
@@ -39,19 +39,16 @@ function BookCard({ refresh, clickedbook }: Props) {
     console.log(tagName);
 
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/addtag/${clickedbook.id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tag: tagName,
-          }),
-          credentials: "include",
+      const res = await fetch(`/api/books/addtag/${clickedbook.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          tag: tagName,
+        }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         refresh();
@@ -65,19 +62,16 @@ function BookCard({ refresh, clickedbook }: Props) {
 
   async function removeTag(tag: string) {
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/removetag/${clickedbook.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tag: tag,
-          }),
-          credentials: "include",
+      const res = await fetch(`/api/books/removetag/${clickedbook.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          tag: tag,
+        }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         refresh();
