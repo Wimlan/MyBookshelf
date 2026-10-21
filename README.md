@@ -22,9 +22,6 @@ api/user/signin<br>
 }
 
 <br><br>
-TEST: "email": "wilma.yasuda@gmail.com",<br>
-"password": "mysecret" <br>
-<br><br>
 **GET: Sign Out**<br>
 api/user/signout<br>
 <br>
