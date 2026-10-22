@@ -31,7 +31,7 @@ function BookPopup({ popup, close }: Props) {
         setAllGenres(data);
         setGenre(data[0]?.genre ?? "");
       } catch (err) {
-        console.log("Could not load genres.");
+        console.log("Could not load genres.", err);
       }
     }
     fetchTags();

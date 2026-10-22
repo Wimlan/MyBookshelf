@@ -48,7 +48,7 @@ function SearchAddBook({ refresh }: Props) {
     <>
       <section className="pt-1 pb-5 text-center bg-darkblue">
         <div className="text-lightest">
-          <SubHeading text="Search for Book Title" />
+          <SubHeading text="Search for a book to add" />
         </div>
         <div className="relative w-80 mx-auto">
           <SearchInput value={searchText} change={setSearchText} />

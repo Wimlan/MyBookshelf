@@ -101,7 +101,7 @@ function Header(props: Props) {
             <SubHeading text="A deleted account cannot be recovered." />
             <p>
               Confirm with the same Google account to permanently delete your
-              account and bookshelf.
+              bookshelf.
             </p>
             <GoogleIdentityButton
               onSuccess={handleDelete}

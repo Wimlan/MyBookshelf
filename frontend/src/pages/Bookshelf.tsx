@@ -79,7 +79,7 @@ function Bookshelf() {
       <SearchAddBook refresh={fetchBookshelf} />
       <AddBook popup={popup} close={() => setPopup(false)} />
       <section className=" pt-2 pb-3 text-lightest text-center bg-darkred ">
-        <SubHeading text="Can't find your book?" />
+        <SubHeading text="Can't find your book above?" />
         <Button value="Create a New Book" click={() => setPopup(true)} />
       </section>
       <BookList bookshelf={bookshelf} fetchBookshelf={fetchBookshelf} />
