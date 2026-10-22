@@ -2,7 +2,7 @@ function Input(props: { change: Function; value: string }) {
   return (
     <section className="mt-3">
       <div className="relative">
-        <form className="w-full">
+        <form className="w-full" onSubmit={(event) => event.preventDefault()}>
           <label
             htmlFor="search"
             className="block mb-2.5 text-sm font-medium text-darkest sr-only "

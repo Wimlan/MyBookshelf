@@ -29,6 +29,7 @@ function BookPopup({ popup, close }: Props) {
         const res = await fetch(`/api/books/genres/`);
         const data = await res.json();
         setAllGenres(data);
+        setGenre(data[0]?.genre ?? "");
       } catch (err) {
         console.log("Could not load genres.");
       }
@@ -97,6 +98,7 @@ function BookPopup({ popup, close }: Props) {
                 name="genre"
                 id="genres"
                 className="block w-full px-3 py-2.5 bg-lightest border border-default-medium text-heading text-sm rounded-base focus:ring-mediumgreen focus:border-mediumgreen shadow-xs placeholder:text-body"
+                value={genre}
                 onChange={(e) => setGenre(e.target.value)}
               >
                 {allGenres?.map((genre) => (

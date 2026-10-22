@@ -16,7 +16,8 @@ function SearchAddBook({ refresh }: Props) {
 
   useEffect(() => {
     async function handleSearch() {
-      const res = await fetch(`/api/books/search?title=${searchText}`);
+      const params = new URLSearchParams({ title: searchText });
+      const res = await fetch(`/api/books/search?${params}`);
       const data = await res.json();
       setSearchRes(data);
     }

@@ -32,7 +32,7 @@ async function getDetailedBook(books: Book[]) {
   return Promise.all(
     books.map(async (book) => {
       const genres: QueryResult<Genre> = await database.query(
-        `SELECT genres.* 
+        `SELECT genres.*
         FROM genres INNER JOIN books
         ON books.genre_id = genres.id
       WHERE books.id = $1`,
@@ -82,7 +82,6 @@ router.patch("/verify/:bookid", async (req, res) => {
 //GET for the frontend Title Search Function
 router.get("/search", async (req, res) => {
   const title = req.query.title;
-  const limit = 5;
 
   if (title) {
     //Get all books with matching title from the books table and sets them into a function to that does inner join
