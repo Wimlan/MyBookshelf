@@ -1,6 +1,11 @@
 declare module "express-session" {
   interface SessionData {
-    user: number | null;
+    user: string | null;
+    pendingGoogle?: {
+      sub: string;
+      email: string;
+      expiresAt: number;
+    };
   }
 }
 

@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { CredentialResponse } from "@react-oauth/google";
 
 import MenuDropdown from "../atoms/MenuDropdown";
 import Heading from "../atoms/Heading";
 import SubHeading from "../atoms/SubHeading";
 import Button from "../atoms/Button";
-import Input from "../atoms/Input";
-import Label from "../atoms/Label";
+import GoogleIdentityButton from "../molecules/GoogleIdentityButton";
+import { readAuthResponse } from "../../auth";
 import { Dialog, DialogPanel } from "@headlessui/react";
 
 interface Props {
@@ -16,7 +17,8 @@ interface Props {
 function Header(props: Props) {
   const [signoutMessage, setSignoutMessage] = useState("");
   const [deleteMessage, setdeleteMessage] = useState("");
-  const [userPass, setUserPass] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const requestInProgress = useRef(false);
   const [popup, setPopup] = useState(false);
   const navigate = useNavigate();
   const errMessage = "Something went wrong. Please try again.";
@@ -29,21 +31,26 @@ function Header(props: Props) {
   async function handleSignout() {
     try {
       const res = await fetch("/api/user/signout", {
-        method: "GET",
+        method: "POST",
         credentials: "include",
       });
 
-      if (res.ok) {
-        navigate("/");
-      } else {
-        setSignoutMessage(errMessage);
-      }
+      await readAuthResponse(res);
+      navigate("/");
     } catch (err) {
-      setSignoutMessage(errMessage);
+      setSignoutMessage(err instanceof Error ? err.message : errMessage);
     }
   }
 
-  async function handleDelete() {
+  async function handleDelete({ credential: idToken }: CredentialResponse) {
+    if (requestInProgress.current) return;
+    if (!idToken) {
+      setdeleteMessage("Google did not return an ID token. Please try again.");
+      return;
+    }
+    requestInProgress.current = true;
+    setIsDeleting(true);
+    setdeleteMessage("");
     try {
       const res = await fetch("/api/user/delete", {
         method: "DELETE",
@@ -51,19 +58,18 @@ function Header(props: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: userPass,
+          idToken,
         }),
         credentials: "include",
       });
 
-      const data = await res.json();
-      if (res.ok) {
-        navigate("/");
-      } else {
-        setdeleteMessage(data.message);
-      }
+      await readAuthResponse(res);
+      navigate("/");
     } catch (err) {
-      setdeleteMessage(errMessage);
+      setdeleteMessage(err instanceof Error ? err.message : errMessage);
+    } finally {
+      requestInProgress.current = false;
+      setIsDeleting(false);
     }
   }
 
@@ -84,32 +90,37 @@ function Header(props: Props) {
 
       <Dialog
         open={popup}
-        onClose={() => setPopup(false)}
+        onClose={() => {
+          if (!isDeleting) setPopup(false);
+        }}
         className="relative z-50 "
       >
         <div className=" fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 border bg-warmgrey p-12 text-darkest">
             <Heading text="Are you sure you want to delete this account?!" />
             <SubHeading text="A deleted account cannot be recovered." />
-            <Label label="Your Password" />
-            <Input
-              value={userPass}
-              type="password"
-              placeholder="password"
-              change={setUserPass}
-              autoComplete="new-password"
+            <p>
+              Confirm with the same Google account to permanently delete your
+              account and bookshelf.
+            </p>
+            <GoogleIdentityButton
+              onSuccess={handleDelete}
+              onError={setdeleteMessage}
+              busy={isDeleting}
             />
-            <Button
-              value="Delete Account"
-              click={handleDelete}
-              bg="bg-red-500"
-            />{" "}
+            {isDeleting && <p role="status">Deleting your account...</p>}
             <Button
               value="Cancel"
-              click={() => setPopup(false)}
+              click={() => {
+                if (!isDeleting) setPopup(false);
+              }}
               bg="bg-gray-500"
             />
-            {deleteMessage && <p className="text-red-500">{deleteMessage}</p>}
+            {deleteMessage && (
+              <p role="alert" className="text-red-500">
+                {deleteMessage}
+              </p>
+            )}
           </DialogPanel>
         </div>
       </Dialog>

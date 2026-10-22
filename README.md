@@ -1,5 +1,79 @@
 LÄNK HEMSIDA: https://mybookshelf-gd5p.onrender.com
 
+## Google authentication setup
+
+Use the same Google OAuth **Web application client ID** in both applications.
+Google Identity Services handles Google sign-in; the backend uses
+`google-auth-library` to verify the ID token's signature, issuer, audience and
+expiry, and requires a verified email. Accounts are identified by Google's `sub`,
+not by an email match. There is no automatic linking to password accounts.
+
+### Local development
+
+1. In `backend`, configure `.env` using `.env.example`: `PGURI`, a strong
+   `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, and `APP_ORIGIN=http://localhost:5173`.
+2. Run `npm install` in `backend`. Ensure the database has the Google identity
+   schema described below; apply the SQL manually if needed.
+3. Run `npm run dev` in `backend` (port 3000).
+4. Configure `frontend/.env.local` using `frontend/.env.example`, setting
+   `VITE_GOOGLE_CLIENT_ID` to the same client ID. Run `npm install` and
+   `npm run dev` in `frontend`.
+5. Open exactly `http://localhost:5173` and authorize that origin in Google Cloud.
+   Mutation requests require an `Origin` matching `APP_ORIGIN`; API clients must
+   send that header too. Restart services after changing environment variables.
+
+For an existing `Users` table, run this SQL directly in your database's SQL editor
+to add Google identity support. These changes have already been applied to the
+database used during local setup; no further action is needed for that database.
+The SQL is safe to rerun and does not delete accounts or bookshelf data.
+
+```sql
+BEGIN;
+
+ALTER TABLE Users ADD COLUMN IF NOT EXISTS google_sub text;
+CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_key ON Users (google_sub);
+ALTER TABLE Users ALTER COLUMN password DROP NOT NULL;
+
+COMMIT;
+```
+
+All database queries and session storage share a PostgreSQL pool. Idle connection
+errors are logged; the pool removes failed idle connections instead of an
+always-open client crashing the backend when the database disconnects.
+
+Never use a client secret in the frontend. This flow needs only the public client
+ID. Neither application logs or stores Google ID tokens.
+
+For production, ensure the deployment database has the same schema (apply the SQL
+above if needed), configure
+`APP_ORIGIN=https://mybookshelf-gd5p.onrender.com`, set `NODE_ENV=production`,
+and supply the same Google client ID in the backend and frontend build
+environment. Production sessions use HttpOnly, Secure, SameSite=Lax cookies,
+with one trusted reverse proxy (as on Render). Authorize the production origin
+in Google Cloud.
+
+### Account flow
+
+- First Google sign-in creates a pending, unauthenticated signup session lasting
+  at most ten minutes. Users then choose a case-sensitive, unique username of
+  3-30 letters, numbers, underscores or hyphens.
+- Completing signup creates the account and regenerates/saves the app session.
+  Returning Google users keep their chosen username.
+- Pending signup does not grant access to bookshelf APIs.
+- Deletion requires an app session and a Google ID token for that account,
+  issued within the last five minutes. Bookshelf tags, bookshelf entries and the
+  account are deleted in one transaction. Shared book records are retained.
+  The app session is destroyed afterward. This does not delete the Google account
+  or revoke consent in Google Account settings.
+- Existing password account rows are preserved but cannot sign in through the
+  removed password endpoints. An email conflict is reported, not auto-linked.
+
+Validation: `npm test` and `npm run build` in `backend`; `npm run build` in
+`frontend`. Server tests use mock Google verification and queued database results,
+never the configured database. They check API behavior and transaction commands,
+not SQL execution or actual PostgreSQL rollback. A real Google login remains a
+manual browser check.
+
 **BACKEND**
 
 Bygg frontend-projektet och återskapa dist-mappen samt starta webbtjänsten:
@@ -12,34 +86,34 @@ USER API
 
 ---
 
-**POST: Sign In**<br>
-api/user/signin<br>
+**POST: Google Sign In**<br>
+api/user/google<br>
 
-=>Email and Password is sent in body. JSON Format:<br><br>
-{
-"email": "example@gmail.com",
-"password": "examplepassword"
-}
+Body: `{ "idToken": "<Google ID token>" }`.<br>
+Returns `{ "requiresUsername": true }` for a new identity or
+`{ "userName": "chosen_username" }` after saving a returning user's session.
 
 <br><br>
-**GET: Sign Out**<br>
+**POST: Sign Out**<br>
 api/user/signout<br>
 <br>
-**POST: Create User**<br>
-api/user/signup<br>
+**GET: Check Pending Signup**<br>
+api/user/google/signup<br>
+Requires an unexpired, Google-verified signup session.
+<br><br>
+**POST: Finish Google Signup**<br>
+api/user/google/signup<br>
 
-=>Username, Email and Password is sent in body. JSON Format:<br><br>
-{
-"username": "userexample",
-"email": "example@gmail.com",
-"password": "examplepassword"
-}
+Body: `{ "username": "userexample" }`.<br>
+Requires the pending signup cookie. Returns `{ "userName": "userexample" }`
+after creating the account and saving its authenticated session.
 <br><br>
 
 **DELETE: Delete User**<br>
 api/user/delete/<br>
 
-=>Body: user password is required in body<br>
+Body: `{ "idToken": "<recent Google ID token for the signed-in account>" }`.<br>
+Requires an authenticated application session.<br>
 <br><br>
 
 ---

@@ -1,10 +1,20 @@
 import dotenv from "dotenv";
-import { Client, Pool } from "pg";
+import { Pool } from "pg";
 dotenv.config();
 
-export const database = new Client({
-  connectionString: process.env.PGURI,
-});
-database.connect();
+if (!process.env.PGURI) {
+  throw new Error("Missing PGURI in the backend environment.");
+}
 
-export const pool = new Pool({ connectionString: process.env.PGURI });
+export const pool = new Pool({
+  connectionString: process.env.PGURI,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  keepAlive: true,
+});
+
+pool.on("error", (error) => {
+  console.error("Idle PostgreSQL connection failed:", error.message);
+});
+
+export const database = pool;

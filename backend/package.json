@@ -8,7 +8,7 @@
     "build-frontend": "npm run --prefix ../frontend build && rm -Rf dist && mv ../frontend/dist .",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsx --test user.test.ts googleAuth.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,11 +16,11 @@
   "type": "module",
   "dependencies": {
     "@types/connect-pg-simple": "^7.0.3",
-    "argon2": "^0.44.0",
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "google-auth-library": "^11.3.1",
     "pg": "^8.21.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^6.0.1"

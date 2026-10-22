@@ -16,7 +16,7 @@ function PrivacyPolicy() {
       <MainTitle />
       <section className="pb-3">
         <Heading text="Privacy Policy – My Bookshelf" />
-        <p>Last updated: June 2026</p>
+        <p>Last updated: October 2026</p>
         <p>
           <span>My Bookshelf</span> is a personal project created and operated
           by an individual based in Gothenburg, Sweden. It is not affiliated
@@ -34,8 +34,9 @@ function PrivacyPolicy() {
             Your <span>email address</span>
           </li>
           <li>
-            Your <span>password</span> (hashed using Argon2 — we never store
-            your password in plain text)
+            Your <span>Google account identifier</span>, used to recognize your
+            account when you sign in. We do not receive or store your Google
+            password.
           </li>
         </ul>
 
@@ -58,8 +59,11 @@ function PrivacyPolicy() {
       <section id="who-share" className="border-t-4 pb-3">
         <SubHeading text="Who we share it with" />
         <p>
-          We do not share your data with anyone. No third parties, no
-          advertisers, no analytics services.
+          We use Google Identity Services to sign you in. Google processes your
+          sign-in according to its own privacy policy. We receive your verified
+          Google account identifier and email address; we do not request access
+          to Gmail or Google Drive. We do not share your bookshelf with Google,
+          advertisers, or analytics services.
         </p>
       </section>
 
@@ -67,8 +71,10 @@ function PrivacyPolicy() {
         <SubHeading text="How long we keep it" />
         <p>
           Your data is kept for as long as your account exists. You can request
-          deletion of your account and all associated data at any time by
-          contacting us.
+          deletion of your account and associated bookshelf data from My Account
+          by confirming your Google identity, or by contacting us. Deleting your
+          My Bookshelf account does not delete your Google account or revoke the
+          connection in your Google Account settings.
         </p>
       </section>
 

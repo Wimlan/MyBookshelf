@@ -1,203 +1,243 @@
 import express from "express";
-import type { QueryResult } from "pg";
-import { database } from "./database.ts";
-import * as argon2 from "argon2";
-import { isAuthenticated } from "./middleware/isAuthenticated.ts";
-
-const router = express.Router();
+import type { Pool } from "pg";
+import type { VerifyGoogleIdToken } from "./googleAuth.ts";
 
 interface User {
-  id: number;
+  id: string;
   username: string;
-  email: string;
-  password: string;
 }
 
-//check if user is logged in and sends username for frontend check
-router.get("/session", async (req, res) => {
-  if (!req.session.user) {
-    res.status(401).json({ message: "Not logged in" });
-    return;
-  }
+interface Options {
+  pool: Pool;
+  verifyIdToken: VerifyGoogleIdToken;
+  appOrigin: string;
+}
 
-  const { rows } = await database.query(
-    "SELECT username FROM Users WHERE id = $1",
-    [req.session.user],
-  );
+function isGoogleIdToken(value: unknown): value is string {
+  const isValid =
+    typeof value === "string" && value.length > 0 && value.length <= 10000;
+  return isValid;
+}
 
-  res.json({ userName: rows[0].username });
-});
-
-//signin
-router.post("/signin", async (req, res, next) => {
-  const inputEmail: User["email"] = req.body.email;
-  const inputPassword: User["password"] = req.body.password;
-
-  const result: QueryResult<User> = await database.query(
-    "SELECT * FROM Users where email = $1",
-    [inputEmail],
-  );
-  const user = result.rows[0];
-  if (!user) {
-    res.status(409).send({ message: "User not found." });
-    return;
-  }
-
-  try {
-    if (await argon2.verify(user.password, inputPassword)) {
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-
-        // store user information in session
-        req.session.user = user.id;
-
-        // save the session before redirection to ensure page
-        // load does not happen before session is saved
-        req.session.save(function (err) {
-          if (err) return next(err);
-          res.send({ message: "Log in successful.", userName: user.username });
-        });
-      });
-    } else {
-      res.status(400).send({ message: "Password did not match." });
-      return;
-    }
-  } catch (err) {
-    res.status(500).send("Unable to find user.");
-  }
-});
-
-//sign out
-router.get("/signout", function (req, res, next) {
-  // clear the user from the session object and save.
-  req.session.user = null;
-  req.session.save(function (err) {
-    if (err) next(err);
-
-    req.session.regenerate(function (err) {
-      if (err) next(err);
-      res.send("You are logged out.");
-    });
+async function regenerateSession(req: express.Request) {
+  await new Promise<void>((resolve, reject) => {
+    req.session.regenerate((error) => (error ? reject(error) : resolve()));
   });
-});
+}
 
-//Create User
-router.post("/signup", async (req, res) => {
-  const newUser: User = req.body;
-  const missing = !newUser.username || !newUser.password || !newUser.email;
-  const invalid =
-    newUser.username.length < 3 ||
-    newUser.password.length < 8 ||
-    !newUser.email.includes("@");
+async function saveSession(req: express.Request) {
+  await new Promise<void>((resolve, reject) => {
+    req.session.save((error) => (error ? reject(error) : resolve()));
+  });
+}
 
-  if (missing) {
-    res.status(400).send({ message: "All fields are required." });
-    return;
-  }
-  if (invalid) {
-    res.status(400).send({ message: "Invalid input." });
-    return;
-  }
+async function login(req: express.Request, res: express.Response, user: User) {
+  await regenerateSession(req);
+  req.session.user = user.id;
+  await saveSession(req);
+  res.json({ userName: user.username });
+}
 
-  //Get username and email and check if already exists
-  const username = await database.query(
-    "SELECT username FROM Users where username = $1",
-    [newUser.username],
-  );
+export function createUserRouter({ pool, verifyIdToken, appOrigin }: Options) {
+  const router = express.Router();
 
-  const email = await database.query(
-    "SELECT email FROM Users where email = $1",
-    [newUser.email],
-  );
-
-  //If already exists, stop signup and return 409
-  if (username.rows.length > 0) {
-    res.status(409).send({ message: "Username already exists." });
-    return;
-  } else if (email.rows.length > 0) {
-    res.status(409).send({ message: "E-mail already exists." });
-    return;
-  } else {
-    //If username, email doesnt exist hash password with Argon2 and add User to database
-    try {
-      const hashedPassword = await argon2.hash(newUser.password);
-      await database.query(
-        "INSERT INTO Users(username, email, password) VALUES ($1, $2, $3);",
-        [newUser.username, newUser.email, hashedPassword],
-      );
-      res.status(201).send({ message: "User created." });
-    } catch {
-      res.status(500).send("Server error.");
-    }
-  }
-});
-
-//Delete User
-router.delete("/delete/", async (req, res) => {
-  const id = req.session.user;
-  const password: string = req.body.password;
-
-  //finds the session user id and checks that the account exists before starting to delete
-  const result = await database.query(
-    "SELECT password FROM Users where id = $1",
-    [id],
-  );
-  const user = result.rows[0];
-  if (!user) {
-    res.status(404).json({ message: "User not found." });
-    return;
-  }
-
-  //verifies that the (from body) sent in password matches the users password
-  //Argon2 compares the two passwords
-  //if it matches: deletes user and removes user session
-  //If not: sends back an error message
-  try {
-    if (await argon2.verify(user.password, password)) {
-      const bookshelvesId = await database.query(
-        "SELECT id FROM Bookshelves WHERE user_id = $1",
-        [id],
-      );
-
-      if (bookshelvesId.rows.length > 0) {
-        bookshelvesId.rows.map(async (bookshelfId) => {
-          const tags = await database.query(
-            "SELECT * FROM BookShelves_Tags WHERE bookshelf_id = $1",
-            [bookshelfId.id],
-          );
-          if (tags.rows.length > 0) {
-            await database.query(
-              "DELETE FROM BookShelves_Tags WHERE bookshelf_id = $1",
-              [bookshelfId.id],
-            );
-          }
-        });
-        await database.query("DELETE FROM Bookshelves WHERE user_id = $1", [
-          id,
-        ]);
-      }
-
-      await database.query("DELETE FROM Users WHERE id = $1", [id]);
-
-      req.session.user = null;
-      req.session.save(function (err) {
-        if (err)
-          return res.status(500).json({ message: "Unable to delete user." });
-
-        req.session.regenerate(function (err) {
-          if (err)
-            return res.status(500).json({ message: "Unable to delete user." });
-
-          res.status(200).json({ message: "User Deleted" });
-        });
-      });
-    } else {
-      res.status(400).json({ message: "You have entered the wrong password." });
+  router.use((req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    const isMutation = req.method === "POST" || req.method === "DELETE";
+    const isUntrustedRequest = isMutation && req.get("origin") !== appOrigin;
+    if (isUntrustedRequest) {
+      res.status(403).json({ message: "Request origin is not allowed." });
       return;
     }
-  } catch (err) {
-    res.status(500).json({ message: "Unable to delete user." });
-  }
-});
+    next();
+  });
 
-export default router;
+  router.get("/session", async (req, res) => {
+    if (!req.session.user) {
+      res.status(401).json({ message: "Not logged in" });
+      return;
+    }
+    const { rows } = await pool.query<User>(
+      "SELECT id, username FROM Users WHERE id = $1",
+      [req.session.user],
+    );
+    const user = rows[0];
+    if (!user) {
+      res.status(401).json({ message: "Your account no longer exists." });
+      return;
+    }
+    res.json({ userName: user.username });
+  });
+
+  router.post("/google", async (req, res) => {
+    const idToken: unknown = req.body?.idToken;
+    if (!isGoogleIdToken(idToken)) {
+      res.status(400).json({ message: "A Google ID token is required." });
+      return;
+    }
+    const identity = await verifyIdToken(idToken);
+    if (!identity) {
+      res.status(401).json({
+        message: "Google sign-in could not be verified. Please try again.",
+      });
+      return;
+    }
+
+    const { rows } = await pool.query<User>(
+      "SELECT id, username FROM Users WHERE google_sub = $1",
+      [identity.sub],
+    );
+    const user = rows[0];
+    if (user) {
+      await login(req, res, user);
+      return;
+    }
+
+    await regenerateSession(req);
+    req.session.pendingGoogle = {
+      sub: identity.sub,
+      email: identity.email,
+      expiresAt: Math.min(identity.expiresAt, Date.now() + 10 * 60 * 1000),
+    };
+    await saveSession(req);
+    res.json({ requiresUsername: true });
+  });
+
+  router.get("/google/signup", (req, res) => {
+    const pending = req.session.pendingGoogle;
+    const isPendingSignup =
+      pending !== undefined && pending.expiresAt > Date.now();
+    if (!isPendingSignup) {
+      res
+        .status(401)
+        .json({ message: "Sign in with Google again to choose a username." });
+      return;
+    }
+    res.json({ requiresUsername: true });
+  });
+
+  router.post("/google/signup", async (req, res) => {
+    const pending = req.session.pendingGoogle;
+    const isPendingSignup =
+      pending !== undefined && pending.expiresAt > Date.now();
+    if (!isPendingSignup) {
+      res.status(401).json({
+        message: "Your signup has expired. Sign in with Google again.",
+      });
+      return;
+    }
+    const username: unknown = req.body?.username;
+    const isValidUsername =
+      typeof username === "string" && /^[A-Za-z0-9_-]{3,30}$/.test(username);
+    if (!isValidUsername) {
+      res.status(400).json({
+        message:
+          "Use 3-30 letters, numbers, underscores, or hyphens for your username.",
+      });
+      return;
+    }
+
+    const { rows } = await pool.query<User>(
+      `INSERT INTO Users (username, email, google_sub)
+       VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, username`,
+      [username, pending.email, pending.sub],
+    );
+    let user = rows[0];
+    if (!user) {
+      const existing = await pool.query<User>(
+        "SELECT id, username FROM Users WHERE google_sub = $1",
+        [pending.sub],
+      );
+      user = existing.rows[0];
+    }
+    if (!user) {
+      const existing = await pool.query(
+        "SELECT id FROM Users WHERE username = $1",
+        [username],
+      );
+      const message = existing.rowCount
+        ? "Username already exists. Please choose another."
+        : "This email is already registered. Automatic account linking is disabled.";
+      res.status(409).json({ message });
+      return;
+    }
+    await login(req, res, user);
+  });
+
+  router.post("/signout", async (req, res) => {
+    await new Promise<void>((resolve, reject) => {
+      req.session.destroy((error) => (error ? reject(error) : resolve()));
+    });
+    res.clearCookie("connect.sid", { path: "/" });
+    res.json({ message: "You are logged out." });
+  });
+
+  router.delete("/delete", async (req, res) => {
+    if (!req.session.user) {
+      res
+        .status(401)
+        .json({ message: "Sign in before deleting your account." });
+      return;
+    }
+    const idToken: unknown = req.body?.idToken;
+    if (!isGoogleIdToken(idToken)) {
+      res.status(400).json({
+        message: "Confirm your Google identity to delete your account.",
+      });
+      return;
+    }
+    const identity = await verifyIdToken(idToken);
+    if (!identity) {
+      res.status(401).json({
+        message: "Google identity confirmation failed. Please try again.",
+      });
+      return;
+    }
+    const isRecentConfirmation =
+      Date.now() - identity.issuedAt <= 5 * 60 * 1000;
+    if (!isRecentConfirmation) {
+      res.status(401).json({
+        message: "Please confirm your Google identity again before deleting.",
+      });
+      return;
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      const { rows } = await client.query(
+        "SELECT id FROM Users WHERE id = $1 AND google_sub = $2 FOR UPDATE",
+        [req.session.user, identity.sub],
+      );
+      if (!rows[0]) {
+        await client.query("ROLLBACK");
+        res.status(403).json({
+          message: "Use the Google account associated with this bookshelf.",
+        });
+        return;
+      }
+      await client.query(
+        `DELETE FROM Bookshelves_Tags WHERE bookshelf_id IN
+         (SELECT id FROM Bookshelves WHERE user_id = $1)`,
+        [req.session.user],
+      );
+      await client.query("DELETE FROM Bookshelves WHERE user_id = $1", [
+        req.session.user,
+      ]);
+      await client.query("DELETE FROM Users WHERE id = $1", [req.session.user]);
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+    await new Promise<void>((resolve, reject) => {
+      req.session.destroy((error) => (error ? reject(error) : resolve()));
+    });
+    res.clearCookie("connect.sid", { path: "/" });
+    res.json({ message: "User deleted." });
+  });
+
+  return router;
+}

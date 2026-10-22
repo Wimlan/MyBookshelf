@@ -1,99 +1,88 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { CredentialResponse } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "../atoms/Button";
-import Input from "../atoms/Input";
-import Label from "../atoms/Label";
 import Heading from "../atoms/Heading";
+import GoogleIdentityButton from "../molecules/GoogleIdentityButton";
+import { readAuthResponse } from "../../auth";
 
 function Signin() {
-  const [userEmail, setUserEmail] = useState("");
-  const [userPass, setUserPass] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const requestInProgress = useRef(false);
   const navigate = useNavigate();
 
-  //sends input user info to backend.
-  //It then checks if the input values are correct.
-  //If ok: returns username and navigates to route bookshelf/:userName
-  //If error: Returns error message.
-  async function handleSignin() {
+  async function handleSignin({ credential: idToken }: CredentialResponse) {
+    if (requestInProgress.current) return;
+
+    setLoginMessage("");
+    if (!idToken) {
+      setLoginMessage("Google did not return an ID token. Please try again.");
+      return;
+    }
+
+    requestInProgress.current = true;
+    setIsSigningIn(true);
+
     try {
-      const res = await fetch("/api/user/signin", {
+      const res = await fetch("/api/user/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: userEmail,
-          password: userPass,
-        }),
+        body: JSON.stringify({ idToken }),
         credentials: "include",
       });
 
-      const data = await res.json();
-      if (res.ok) {
-        navigate(`/bookshelf/${data.userName}`);
-      } else {
-        setLoginMessage(data.message);
+      const data = await readAuthResponse(res);
+      if (data.requiresUsername) {
+        navigate("/createuser");
+        return;
       }
-    } catch (err) {
-      setLoginMessage("Something went wrong. Please try again.");
+      const userName = data.userName;
+      const isInvalidResponse =
+        typeof userName !== "string" || !userName.trim();
+
+      if (isInvalidResponse) {
+        throw new Error("The server returned an invalid sign-in response.");
+      }
+
+      navigate(`/bookshelf/${encodeURIComponent(userName)}`);
+    } catch (error) {
+      setLoginMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to sign in with Google. Please try again.",
+      );
+    } finally {
+      requestInProgress.current = false;
+      setIsSigningIn(false);
     }
   }
 
   return (
     <section
       id="sign-in"
-      className="pt-3 pb-3 w-2/3 mx-auto text-center text-lightest lg:w-1/3 "
+      className="pt-3 pb-3 w-2/3 mx-auto text-center text-lightest lg:w-1/3"
+      aria-busy={isSigningIn}
     >
-      <Label label="Your Email" />
-      <Input
-        value={userEmail}
-        type="text"
-        change={setUserEmail}
-        placeholder="name@example.com"
+      <Heading text="Sign in with Google" />
+      <p className="mb-3">Use your Google account to continue.</p>
+      <GoogleIdentityButton
+        onSuccess={handleSignin}
+        onError={setLoginMessage}
+        busy={isSigningIn}
       />
-      <Label label="Your Password" />
-      <Input
-        value={userPass}
-        type="password"
-        placeholder="password"
-        change={setUserPass}
-      />
-      {/* Error message from fetch. Shows
-      message only if message exists. */}
+      {isSigningIn && <p role="status">Signing you in...</p>}
       {loginMessage && (
-        <p className="text-red-500 bg-warmgrey w-fit mx-auto p-1">
+        <p role="alert" className="text-red-500 bg-warmgrey w-fit mx-auto p-1">
           {loginMessage}
         </p>
       )}
-      <Button value="Sign In" click={handleSignin} />
-
-      <div className="mt-2 mb-2">
-        <Heading text="No Account Yet?" />
-        <Link
-          to="/createuser"
-          className="inline-flex items-center justify-center p-5 text-darkest font-bold border-4 border-solid border-mediumgreen rounded hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 rounded-base bg-warmgrey"
-        >
-          <span className="w-full">Create a New User</span>
-          <svg
-            className="w-6 h-6 ms-1 rtl:rotate-180"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="50"
-            height="50"
-            fill="none"
-            viewBox="0 0 20 20"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 12H5m14 0-4 4m4-4-4-4"
-            />
-          </svg>
+      <p className="mt-3">
+        <Link to="/privacypolicy" className="underline hover:text-purple-500">
+          Privacy Policy
         </Link>
-      </div>
+      </p>
     </section>
   );
 }
