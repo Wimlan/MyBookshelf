@@ -2,6 +2,7 @@ import express from "express";
 import type { QueryResult } from "pg";
 import { database } from "./database.ts";
 import { isAuthenticated } from "./middleware/isAuthenticated.ts";
+import { isAdmin } from "./middleware/isAdmin.ts";
 
 const router = express.Router();
 
@@ -47,7 +48,7 @@ async function getDetailedBook(books: Book[]) {
 
 //FOR ADMIN
 //GET all books not verified
-router.get("/notverified", async (req, res) => {
+router.get("/notverified", isAdmin, async (req, res) => {
   const books: QueryResult<Book> = await database.query(
     "SELECT * FROM books WHERE verified = FALSE ORDER BY created_at",
   );
@@ -56,7 +57,7 @@ router.get("/notverified", async (req, res) => {
 });
 
 //Used to verify book and add to shelf
-router.patch("/verify/:bookid", async (req, res) => {
+router.patch("/verify/:bookid", isAdmin, async (req, res) => {
   const bookId = Number(req.params.bookid);
 
   const result: QueryResult<{ added_by: number }> = await database.query(
